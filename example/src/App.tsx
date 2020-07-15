@@ -2,18 +2,16 @@ import * as React from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import QueueIt from 'react-native-queue-it';
 
-export default function App() {
-  const [result, setResult] = React.useState<number | undefined>();
-
-  React.useEffect(() => {
-    QueueIt.multiply(3, 7).then(setResult);
-  }, []);
-
-  return (
-    <View style={styles.container}>
-      <Text>Result: {result}</Text>
-    </View>
-  );
+class App extends React.Component {
+  render() {
+    const result = 0;
+    console.log(QueueIt);
+    return (
+      <View style={styles.container}>
+        <Text>Result: {result}</Text>
+      </View>
+    );
+  }
 }
 
 const styles = StyleSheet.create({
@@ -23,3 +21,5 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+export default App;
