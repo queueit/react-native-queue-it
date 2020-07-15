@@ -1,0 +1,6 @@
+rootProject.name = 'QueueItExample'
+apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
+include ':app'
+
+include ':reactnativequeueit'
+project(':reactnativequeueit').projectDir = new File(rootProject.projectDir, '../../android')
