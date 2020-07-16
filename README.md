@@ -32,7 +32,7 @@ To protect parts of your application you'll need to make a `QueueIt.run` call an
 Once the async call completes, the user has gone through the queue and you get a **token** for this session.
 
 ``` js
-import QueueIt from "react-native-queue-it";
+import { QueueIt, EnqueueResult} from "react-native-queue-it";
 
 // ...
 
@@ -45,7 +45,10 @@ import QueueIt from "react-native-queue-it";
 enqueue = async () => {
     try {
         console.log('going to queue-it');
-        const token = await QueueIt.run(this.state.clientId, this.state.eventIdOrAlias);
+        QueueIt.on('openingQueueView', ()=>{
+            console.log('opening queue page..');
+        });
+        const enqueueResult: EnqueueResult = await QueueIt.run(this.state.clientId, this.state.eventIdOrAlias);
         console.log( `got through: ${token}` );
         return token;
     } catch (e) {
@@ -57,29 +60,12 @@ As the App developer you must manage the state (whether user was previously queu
 
 ![App Integration Flow](https://github.com/sp0x/react-native-queue-it/blob/master/App%20integration%20flow.PNG "App Integration Flow")
 
-### Testing 
-
-If you want to use a testing queue, instead of the production one, you just need to call:
-
-``` js
-QueueIt.enableTesting();
-```
-Just make sure you do this, before calling `run`.
 
 ### Events
 
 You can subscribe to receive events from the library. Right now these are the events that are emitted:
 
 * `openingQueueView` - Happens whenever the queue screen is going to be shown.
-
-To subscribe for the events, you can place this snippet inside your `onComponentDidMount` method:
-
-``` js
-const eventEmitter = new NativeEventEmitter(QueueIt);
-this.eventListener = eventEmitter.addListener('openingQueueView', () => {
-    console.log('opening queue page..');
-});
-```
 
 ## License
 
