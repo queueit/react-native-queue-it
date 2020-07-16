@@ -51,7 +51,8 @@ class App extends Component<{}, AppState> {
       <SafeAreaView>
         <ScrollView
           contentInsetAdjustmentBehavior="automatic"
-          style={styles.scrollView}>
+          style={styles.scrollView}
+          >
           <View style={styles.body}>
             <View style={styles.sectionContainer}>
               <Text style={styles.sectionDescription}>
