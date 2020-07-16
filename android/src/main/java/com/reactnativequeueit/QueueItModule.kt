@@ -15,14 +15,6 @@ class QueueItModule(reactContext: ReactApplicationContext)
     return "QueueIt"
   }
 
-  // Example method
-  // See https://facebook.github.io/react-native/docs/native-modules-android
-  @ReactMethod
-  fun multiply(a: Int, b: Int, promise: Promise) {
-    promise.resolve(a * b)
-  }
-
-
   @ReactMethod
   fun enableTesting() {
     QueueService.IsTest = true

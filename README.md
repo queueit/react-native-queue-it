@@ -45,7 +45,7 @@ import QueueIt from "react-native-queue-it";
 enqueue = async () => {
     try {
         console.log('going to queue-it');
-        const token = await QueueIt.run(this.state.clientId, this.state.event);
+        const token = await QueueIt.run(this.state.clientId, this.state.eventIdOrAlias);
         console.log( `got through: ${token}` );
         return token;
     } catch (e) {

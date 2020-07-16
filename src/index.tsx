@@ -1,7 +1,6 @@
 import { NativeModules, EventSubscriptionVendor } from 'react-native';
 
-type QueueItType = EventSubscriptionVendor & {
-  multiply(a: number, b: number): Promise<number>;
+type QueueItType = EventSubscriptionVendor & {  
   enableTesting(): void;
   run(clientId: string, eventOrAlias: string): Promise<string>;
 };
