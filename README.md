@@ -1,9 +1,14 @@
 # react-native-queue-it
 
-A React Native Queue-It Wrapper
+React Native Module for integrating Queue-it's virtual waiting room into React Native apps.
+
+## Sample app
+A sample app project to try out functionality in the library can be found in the [example](https://github.com/sp0x/react-native-queue-it/tree/master/example) directory.
 
 ## Installation
+Before starting please download the whitepaper **Mobile App Integration** from the Go Queue-it Platform. This whitepaper contains the needed information to perform a successful integration.
 
+Using npm you can install the module:
 ``` sh
 npm install react-native-queue-it
 ```
@@ -23,8 +28,6 @@ Once the user gets in a queue, he's shown a different activity `QueueActivity` ,
 
 ## Usage
 
-If you want to see an example application, you can see the [example](https://github.com/sp0x/react-native-queue-it/tree/master/example) directory.
-
 To protect parts of your application you'll need to make a `QueueIt.run` call and await it's result.
 Once the async call completes, the user has gone through the queue and you get a **token** for this session.
 
@@ -33,6 +36,12 @@ import QueueIt from "react-native-queue-it";
 
 // ...
 
+//This function would make the user enter a queue and it would await for his turn to come.
+//It returns a token that signifies the user's session.
+//An exception would be thrown if:
+// the queue is disabled.
+// the queue is unavailable.
+// there's an error in sending the user to the queue.
 enqueue = async () => {
     try {
         console.log('going to queue-it');
@@ -44,6 +53,9 @@ enqueue = async () => {
     }
 };
 ```
+As the App developer you must manage the state (whether user was previously queued up or not) inside your app's storage. After you have awaited the `run` call, the app must remember this, possibly with a date/time expiration. When the user goes to another page/screen - you check his state, and only call `run` in the case where the user was not previously queued up. When the user clicks back, the same check needs to be done.
+
+![App Integration Flow](https://github.com/queueit/android-webui-sdk/blob/master/App%20integration%20flow.PNG "App Integration Flow")
 
 ### Testing 
 
