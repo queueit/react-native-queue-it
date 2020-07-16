@@ -1,6 +1,6 @@
 {
   "name": "react-native-queue-it",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "A React Native Queue-It Wrapper",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -35,7 +35,7 @@
     "android"
   ],
   "repository": "https://github.com/sp0x/react-native-queue-it",
-  "author": "Vasil <vava@queue-it.com> (http://queue-it.com)",
+  "author": "Vasil <vava@queue-it.com> (https://queue-it.com)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/sp0x/react-native-queue-it/issues"

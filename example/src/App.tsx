@@ -23,7 +23,6 @@ class App extends Component<{}, AppState> {
   componentDidMount() {
     QueueIt.enableTesting();
     const eventEmitter = new NativeEventEmitter(QueueIt);
-
     this.eventListener = eventEmitter.addListener('openingQueueView', () => {
       console.log('opening queue page..');
     });
