@@ -23,6 +23,8 @@ Once the user gets in a queue, he's shown a different activity `QueueActivity` ,
 
 ## Usage
 
+If you want to see an example application, you can see the [example](https://github.com/sp0x/react-native-queue-it/tree/master/example) directory.
+
 To protect parts of your application you'll need to make a `QueueIt.run` call and await it's result.
 Once the async call completes, the user has gone through the queue and you get a **token** for this session.
 
