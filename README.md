@@ -5,7 +5,7 @@
 React Native Module for integrating Queue-it's virtual waiting room into React Native apps.
 
 ## Sample app
-A sample app project to try out functionality in the library can be found in the [example](https://github.com/sp0x/react-native-queue-it/tree/master/example) directory.
+A sample app project to try out functionality in the library can be found in the [example](https://github.com/queueit/react-native-queue-it/tree/master/example) directory.
 
 ## Installation
 Before starting please download the whitepaper **Mobile App Integration** from the Go Queue-it Platform. This whitepaper contains the needed information to perform a successful integration.
@@ -75,7 +75,7 @@ enqueue = async () => {
 ```
 As the App developer you must manage the state (whether user was previously queued up or not) inside your app's storage. After you have awaited the `run` call, the app must remember this, possibly with a date/time expiration. When the user goes to another page/screen - you check his state, and only call `run` in the case where the user was not previously queued up. When the user clicks back, the same check needs to be done.
 
-![App Integration Flow](https://github.com/sp0x/react-native-queue-it/blob/master/App%20integration%20flow.PNG "App Integration Flow")
+![App Integration Flow](https://github.com/queueit/react-native-queue-it/blob/master/App%20integration%20flow.PNG "App Integration Flow")
 
 
 ### Events
