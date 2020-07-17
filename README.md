@@ -68,6 +68,7 @@ enqueue = async () => {
           console.log('queue is unavailable');
           break;
       }
+      return enqueueResult.Token;
     } catch (e) {
       console.log(`error: ${e}`);
     }

@@ -1,7 +1,7 @@
 {
   "name": "react-native-queue-it",
-  "version": "0.1.8",
-  "description": "A React Native Queue-It Wrapper",
+  "version": "0.1.9",
+  "description": "React Native Module for integrating Queue-it's virtual waiting room into React Native apps.",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
   "types": "lib/typescript/src/index.d.ts",
