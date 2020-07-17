@@ -1,3 +1,5 @@
+[![NPM](https://nodei.co/npm/react-native-queue-it.png)](https://www.npmjs.com/package/react-native-queue-it)
+
 # react-native-queue-it
 
 React Native Module for integrating Queue-it's virtual waiting room into React Native apps.
