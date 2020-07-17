@@ -39,9 +39,11 @@ import { QueueIt, EnqueueResultState } from 'react-native-queue-it';
 //This function would make the user enter a queue and it would await for his turn to come.
 //It returns a token that signifies the user's session.
 //An exception would be thrown if:
-// the queue is disabled.
-// the queue is unavailable.
-// there's an error in sending the user to the queue.
+// 1) Queue-it's servers can't be reached (connectivity issue).
+// 2) SSL connection error if custom queue domain is used having an invalid certificate.
+// 3) Client receives HTTP 4xx response.
+// In all these cases is most likely a misconfiguration of the queue settings:
+// Invalid customer ID, event alias ID or cname setting on queue (GO Queue-it portal -> event settings).
 enqueue = async () => {
     try {
       console.log('going to queue-it');
