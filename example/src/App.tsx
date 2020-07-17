@@ -7,32 +7,42 @@ import {
   ScrollView,
   Button,
   TextInput,
-  NativeEventEmitter,
 } from 'react-native';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 
-import QueueIt from 'react-native-queue-it';
+import { QueueIt, EnqueueResultState } from 'react-native-queue-it';
 
 type AppState = {
   clientId: string;
-  event: string;
+  eventOrAlias: string;
 };
 
 class App extends Component<{}, AppState> {
-  eventListener: any;
   componentDidMount() {
     QueueIt.enableTesting();
-    const eventEmitter = new NativeEventEmitter(QueueIt);
-    this.eventListener = eventEmitter.addListener('openingQueueView', () => {
-      console.log('opening queue page..');
-    });
   }
 
   enqueue = async () => {
     try {
       console.log('going to queue-it');
-      const token = await QueueIt.run(this.state.clientId, this.state.event);
-      console.log(`got through: ${token}`);
+      QueueIt.once('openingQueueView', () => {
+        console.log('opening queue page..');
+      });
+      const enqueueResult = await QueueIt.run(
+        this.state.clientId,
+        this.state.eventOrAlias
+      );
+      switch (enqueueResult.State) {
+        case EnqueueResultState.Disabled:
+          console.log('queue is disabled');
+          break;
+        case EnqueueResultState.Passed:
+          console.log(`user got his turn, with token: ${enqueueResult.Token}`);
+          break;
+        case EnqueueResultState.Unavailable:
+          console.log('queue is unavailable');
+          break;
+      }
     } catch (e) {
       console.log(`error: ${e}`);
     }
@@ -43,7 +53,7 @@ class App extends Component<{}, AppState> {
   };
 
   onEventChange = (txt: string) => {
-    this.setState({ event: txt });
+    this.setState({ eventOrAlias: txt });
   };
 
   render() {
@@ -52,7 +62,7 @@ class App extends Component<{}, AppState> {
         <ScrollView
           contentInsetAdjustmentBehavior="automatic"
           style={styles.scrollView}
-          >
+        >
           <View style={styles.body}>
             <View style={styles.sectionContainer}>
               <Text style={styles.sectionDescription}>
@@ -62,14 +72,14 @@ class App extends Component<{}, AppState> {
               <View style={styles.margined}>
                 <Text>Client Id</Text>
                 <TextInput
-                  style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-                  onChangeText={text => this.onClientChange(text)}
+                  style={styles.inputBox}
+                  onChangeText={(text) => this.onClientChange(text)}
                 />
               </View>
               <View style={styles.margined}>
                 <Text>Event Id or Alias</Text>
                 <TextInput
-                  style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
+                  style={styles.inputBox}
                   onChangeText={(text) => this.onEventChange(text)}
                 />
               </View>
@@ -87,6 +97,11 @@ class App extends Component<{}, AppState> {
 const styles = StyleSheet.create({
   scrollView: {
     backgroundColor: Colors.lighter,
+  },
+  inputBox: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
   },
   engine: {
     position: 'absolute',

@@ -5,6 +5,11 @@ import com.facebook.react.bridge.*
 import com.facebook.react.modules.core.DeviceEventManagerModule
 import com.queue_it.androidsdk.*
 
+
+enum class EnqueueResultState {
+  Passed, Disabled, Unavailable
+}
+
 class QueueItModule(reactContext: ReactApplicationContext)
   : ReactContextBaseJavaModule(reactContext) {
 
@@ -21,18 +26,23 @@ class QueueItModule(reactContext: ReactApplicationContext)
   }
 
   @ReactMethod
-  fun run(customerId: String, eventAlias: String, promise: Promise) {
-
-    val qListener = object: QueueListener{
+  fun runAsync(customerId: String, eventAlias: String, promise: Promise) {
+    val qListener = object : QueueListener {
       override fun onQueuePassed(queuePassedInfo: QueuePassedInfo?) {
         handler.post(Runnable {
-          promise.resolve(queuePassedInfo?.queueItToken)
+          val params = Arguments.createMap()
+          params.putString("token", queuePassedInfo?.queueItToken)
+          params.putString("state", EnqueueResultState.Passed.name)
+          promise.resolve(params)
         })
       }
 
       override fun onQueueItUnavailable() {
         handler.post(Runnable {
-          promise.reject("unavailable", "unavailable")
+          val params = Arguments.createMap()
+          params.putNull("token")
+          params.putString("state", EnqueueResultState.Unavailable.name)
+          promise.resolve(params)
         })
       }
 
@@ -43,7 +53,10 @@ class QueueItModule(reactContext: ReactApplicationContext)
 
       override fun onQueueDisabled() {
         handler.post(Runnable {
-          promise.reject("disabled", "disabled")
+          val params = Arguments.createMap()
+          params.putNull("token")
+          params.putString("state", EnqueueResultState.Disabled.name)
+          promise.resolve(params)
         })
       }
 

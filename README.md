@@ -32,7 +32,7 @@ To protect parts of your application you'll need to make a `QueueIt.run` call an
 Once the async call completes, the user has gone through the queue and you get a **token** for this session.
 
 ``` js
-import { QueueIt, EnqueueResult} from "react-native-queue-it";
+import { QueueIt, EnqueueResultState } from 'react-native-queue-it';
 
 // ...
 
@@ -44,15 +44,28 @@ import { QueueIt, EnqueueResult} from "react-native-queue-it";
 // there's an error in sending the user to the queue.
 enqueue = async () => {
     try {
-        console.log('going to queue-it');
-        QueueIt.on('openingQueueView', ()=>{
-            console.log('opening queue page..');
-        });
-        const enqueueResult: EnqueueResult = await QueueIt.run(this.state.clientId, this.state.eventIdOrAlias);
-        console.log( `got through: ${token}` );
-        return token;
+      console.log('going to queue-it');
+      //We wait for the `openingQueueView` event to be emitted once.
+      QueueIt.once('openingQueueView', () => {
+        console.log('opening queue page..');
+      });
+      const enqueueResult = await QueueIt.run(
+        this.state.clientId,
+        this.state.eventOrAlias
+      );
+      switch (enqueueResult.State) {
+        case EnqueueResultState.Disabled:
+          console.log('queue is disabled');
+          break;
+        case EnqueueResultState.Passed:
+          console.log(`user got his turn, with token: ${enqueueResult.Token}`);
+          break;
+        case EnqueueResultState.Unavailable:
+          console.log('queue is unavailable');
+          break;
+      }
     } catch (e) {
-        console.log( `error: ${e}` );
+      console.log(`error: ${e}`);
     }
 };
 ```
