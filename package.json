@@ -1,6 +1,6 @@
 {
   "name": "react-native-queue-it",
-  "version": "0.1.6",
+  "version": "0.1.7",
   "description": "A React Native Queue-It Wrapper",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",

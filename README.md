@@ -80,7 +80,16 @@ As the App developer you must manage the state (whether user was previously queu
 
 ### Events
 
-You can subscribe to receive events from the library. Right now these are the events that are emitted:
+You can receive events from this library by subscribing to it:
+```js
+QueueIt.once('openingQueueView', ()=> console.log('opening queue page..'));
+//Or
+const listener = QueueIt.on('openingQueueView', ()=> console.log('opening queue page..'));
+// ...
+listener.remove();
+```
+
+Right now these are the events that are emitted:
 
 * `openingQueueView` - Happens whenever the queue screen is going to be shown.
 
