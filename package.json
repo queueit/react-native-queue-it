@@ -137,5 +137,8 @@
       "module",
       "typescript"
     ]
+  },
+  "dependencies": {
+    "react-mixin": "^2.0.2"
   }
 }
