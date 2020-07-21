@@ -16,4 +16,14 @@ RCT_REMAP_METHOD(multiply,
   resolve(result);
 }
 
+RCT_REMAP_METHOD(enableTesting, enableTesting)
+{
+    NSLog(@"enabled testing");
+}
+
+RCT_REMAP_METHOD(runAsync,
+                 runAsync:(nonnull NSString*) clientId eventOrAliasId:(nonnull NSString*)eventOrAliasId){
+    NSLog(@"Running");
+}
+
 @end
