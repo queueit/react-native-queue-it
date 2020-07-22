@@ -15,7 +15,7 @@ Using npm you can install the module:
 npm install react-native-queue-it
 ```
 
-The library also needs network state information so you'll need to include these permissions in your app's manifest file:
+If you're using Android, the library also needs network state information so you'll need to include these permissions in your app's manifest file:
 
 ``` xml
 <uses-permission android:name="android.permission.INTERNET" />
@@ -52,6 +52,9 @@ enqueue = async () => {
       //We wait for the `openingQueueView` event to be emitted once.
       QueueIt.once('openingQueueView', () => {
         console.log('opening queue page..');
+      });
+      QueueIt.once('userExited', () => {
+        console.log('user exited the line');
       });
       const enqueueResult = await QueueIt.run(
         this.state.clientId,
@@ -93,6 +96,7 @@ listener.remove();
 Right now these are the events that are emitted:
 
 * `openingQueueView` - Happens whenever the queue screen is going to be shown.
+* `userExited` - Happens whenever the user exists the line. Note that he may return back to it if he desires.
 
 ## License
 
