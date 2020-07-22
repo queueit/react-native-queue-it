@@ -28,6 +28,9 @@ class App extends Component<{}, AppState> {
       QueueIt.once('openingQueueView', () => {
         console.log('opening queue page..');
       });
+      QueueIt.once('userExited', () => {
+        console.log('user exited the line');
+      });
       const enqueueResult = await QueueIt.run(
         this.state.clientId,
         this.state.eventOrAlias
