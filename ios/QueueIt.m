@@ -12,24 +12,6 @@ NSString * const EnqueueResultState_toString[] = {
     [Unavailable] = @"Unavailable"
 };
 
-/**
-UIViewController *__nullable RCTPresentedViewController(void)
-{
-  if (RCTRunningInAppExtension()) {
-    return nil;
-  }
-
-  UIViewController *controller = RCTKeyWindow().rootViewController;
-  UIViewController *presentedController = controller.presentedViewController;
-  while (presentedController && ![presentedController isBeingDismissed]) {
-    controller = presentedController;
-    presentedController = controller.presentedViewController;
-  }
-
-  return controller;
-}
-**/
-
 @implementation QueueIt
 
 RCT_EXPORT_MODULE()
@@ -41,7 +23,7 @@ RCT_EXPORT_MODULE()
 
 RCT_REMAP_METHOD(enableTesting, enableTesting)
 {
-    NSLog(@"enabled testing");
+    [QueueService setTesting: YES];
 }
 
 RCT_REMAP_METHOD(runAsync,
@@ -62,7 +44,6 @@ RCT_REMAP_METHOD(runAsync,
     self.engine.queueUserExitedDelegate = self; // Invoked when user chooses to leave the queue
     self.resolve = resolve;
     self.reject = reject;
-    // run the engine
 
     NSError* error = nil;
     @try {
@@ -110,7 +91,7 @@ RCT_REMAP_METHOD(runAsync,
 }
 
 - (void)notifyUserExited {
-    NSLog(@"User exited app.");
+    [self sendEventWithName: @"userExited" body:@{}];
 }
 
 @end
