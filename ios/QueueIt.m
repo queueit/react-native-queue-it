@@ -35,7 +35,7 @@ RCT_REMAP_METHOD(runAsync,
     NSString* language = nil; // Optional (pass nil if no language specified)
 
     UIViewController* vc = RCTPresentedViewController();
-    self.engine = [[QueueITEngine alloc]initWithHost:vc customerId:customerId eventOrAliasId:eventOrAliasId layoutName:layoutName language:language];
+    self.engine = [[QueueITEngine alloc]initWithHost:vc customerId:customerId eventOrAliasId:eventOrAliasId layoutName:layoutName language:language]; //ARC
     //[self.engine setViewDelay:5]; // Optional delay parameter you can specify (in case you want to inject some animation before Queue-It UIWebView or WKWebView will appear
     self.engine.queuePassedDelegate = self; // Invoked once the user is passed the queue
     self.engine.queueViewWillOpenDelegate = self; // Invoked to notify that Queue-It UIWebView or WKWebview will open
@@ -70,7 +70,7 @@ RCT_REMAP_METHOD(runAsync,
 
 - (NSArray<NSString *> *)supportedEvents
 {
-  return @[@"openingQueueView"];
+  return @[@"openingQueueView", @"userExited"];
 }
 
 - (void)notifyYourTurn:(QueuePassedInfo *)queuePassedInfo {
