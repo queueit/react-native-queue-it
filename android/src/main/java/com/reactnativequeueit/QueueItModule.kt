@@ -28,6 +28,11 @@ class QueueItModule(reactContext: ReactApplicationContext)
   @ReactMethod
   fun runAsync(customerId: String, eventAlias: String, promise: Promise) {
     val qListener = object : QueueListener {
+      override fun onUserExited() {
+        val params = Arguments.createMap()
+        sendEvent(context, "userExited", params)
+      }
+
       override fun onQueuePassed(queuePassedInfo: QueuePassedInfo?) {
         handler.post(Runnable {
           val params = Arguments.createMap()
@@ -68,7 +73,7 @@ class QueueItModule(reactContext: ReactApplicationContext)
     }
 
     handler.post(Runnable {
-      val queueEngine = QueueITEngine(context, customerId, eventAlias, qListener)
+      val queueEngine = QueueITEngine(context.currentActivity, customerId, eventAlias, qListener)
       queueEngine.run(context.currentActivity)
     })
   }
