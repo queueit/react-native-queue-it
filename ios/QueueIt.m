@@ -21,9 +21,10 @@ RCT_EXPORT_MODULE()
   return dispatch_get_main_queue();
 }
 
-RCT_REMAP_METHOD(enableTesting, enableTesting)
+RCT_REMAP_METHOD(enableTesting,
+                 enableTesting:(BOOL)value)
 {
-    [QueueService setTesting: YES];
+    [QueueService setTesting: value];
 }
 
 RCT_REMAP_METHOD(runAsync,

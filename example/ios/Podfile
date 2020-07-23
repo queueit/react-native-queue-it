@@ -62,6 +62,8 @@ target 'QueueItExample' do
   # Note that if you have use_frameworks! enabled, Flipper will not work and
   # you should disable these next few lines.
   add_flipper_pods!
+  pod 'RNCCheckbox', :path => '../node_modules/@react-native-community/checkbox'
+
   post_install do |installer|
     flipper_post_install(installer)
   end

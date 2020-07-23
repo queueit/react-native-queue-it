@@ -21,8 +21,8 @@ class QueueItModule(reactContext: ReactApplicationContext)
   }
 
   @ReactMethod
-  fun enableTesting() {
-    QueueService.IsTest = true
+  fun enableTesting(value: Boolean) {
+    QueueService.IsTest = value
   }
 
   @ReactMethod

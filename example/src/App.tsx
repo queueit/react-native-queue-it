@@ -8,6 +8,7 @@ import {
   Button,
   TextInput,
 } from 'react-native';
+import CheckBox from '@react-native-community/checkbox';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 
 import { QueueIt, EnqueueResultState } from 'react-native-queue-it';
@@ -15,11 +16,20 @@ import { QueueIt, EnqueueResultState } from 'react-native-queue-it';
 type AppState = {
   clientId: string;
   eventOrAlias: string;
+  isTesting: boolean;
 };
 
 class App extends Component<{}, AppState> {
+  constructor(props: any) {
+    super(props);
+    this.state = {
+      clientId: '',
+      eventOrAlias: '',
+      isTesting: false,
+    };
+  }
   componentDidMount() {
-    QueueIt.enableTesting();
+    //QueueIt.enableTesting();
   }
 
   enqueue = async () => {
@@ -40,7 +50,7 @@ class App extends Component<{}, AppState> {
           console.log('queue is disabled');
           break;
         case EnqueueResultState.Passed:
-          console.log(`user got his turn, with Queueittoken: ${enqueueResult.Queueittoken}`);
+          console.log(`user got his turn, with QueueITToken: ${enqueueResult.QueueITToken}`);
           break;
         case EnqueueResultState.Unavailable:
           console.log('queue is unavailable');
@@ -58,6 +68,12 @@ class App extends Component<{}, AppState> {
   onEventChange = (txt: string) => {
     this.setState({ eventOrAlias: txt });
   };
+
+  toggleTesting = () => {
+    const newT = !this.state.isTesting;
+    QueueIt.enableTesting(newT);
+    this.setState({ isTesting: newT })
+  }
 
   render() {
     return (
@@ -86,6 +102,13 @@ class App extends Component<{}, AppState> {
                   onChangeText={(text) => this.onEventChange(text)}
                 />
               </View>
+              <View style={styles.container}>
+                <Text>
+                  <CheckBox style={styles.mr10} value={this.state.isTesting} onValueChange={() => this.toggleTesting()} />
+                  Enable testing
+                </Text>
+                
+              </View>
               <View style={styles.margined}>
                 <Button onPress={this.enqueue} title="Enqueue" />
               </View>
@@ -100,6 +123,14 @@ class App extends Component<{}, AppState> {
 const styles = StyleSheet.create({
   scrollView: {
     backgroundColor: Colors.lighter,
+  },
+  mr10: {
+    marginRight: 10
+  },
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    marginTop: 15,
   },
   inputBox: {
     height: 40,

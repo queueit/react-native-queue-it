@@ -31,7 +31,7 @@ Once the user gets in a queue, he's shown a different activity `QueueActivity` ,
 ## Usage
 
 To protect parts of your application you'll need to make a `QueueIt.run` call and await it's result.
-Once the async call completes, the user has gone through the queue and you get a **Queueittoken** for this session.
+Once the async call completes, the user has gone through the queue and you get a **QueueITToken** for this session.
 
 ``` js
 import { QueueIt, EnqueueResultState } from 'react-native-queue-it';
@@ -39,7 +39,7 @@ import { QueueIt, EnqueueResultState } from 'react-native-queue-it';
 // ...
 
 //This function would make the user enter a queue and it would await for his turn to come.
-//It returns a Queueittoken that signifies the user's session.
+//It returns a QueueITToken that signifies the user's session.
 //An exception would be thrown if:
 // 1) Queue-it's servers can't be reached (connectivity issue).
 // 2) SSL connection error if custom queue domain is used having an invalid certificate.
@@ -65,13 +65,13 @@ enqueue = async () => {
           console.log('queue is disabled');
           break;
         case EnqueueResultState.Passed:
-          console.log(`user got his turn, with Queueittoken: ${enqueueResult.Queueittoken}`);
+          console.log(`user got his turn, with QueueITToken: ${enqueueResult.QueueITToken}`);
           break;
         case EnqueueResultState.Unavailable:
           console.log('queue is unavailable');
           break;
       }
-      return enqueueResult.Queueittoken;
+      return enqueueResult.QueueITToken;
     } catch (e) {
       console.log(`error: ${e}`);
     }
