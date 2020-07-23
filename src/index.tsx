@@ -6,7 +6,7 @@ import {
 } from 'react-native';
 
 const nativeQueueIt = NativeModules.QueueIt as EventSubscriptionVendor & {
-  enableTesting(): void;
+  enableTesting(value: boolean): void;
   runAsync(clientId: string, eventOrAlias: string): Promise<any>;
 };
 const queueItEventEmitter = new NativeEventEmitter(nativeQueueIt);
@@ -18,19 +18,19 @@ export enum EnqueueResultState {
 }
 
 export interface EnqueueResult {
-  Token: string;
+  QueueITToken: string;
   State: EnqueueResultState;
 }
 
 class QueueItEngine {
-  enableTesting(): void {
-    nativeQueueIt.enableTesting();
+  enableTesting(value: boolean): void {
+    nativeQueueIt.enableTesting(value);
   }
 
   async run(clientId: string, eventOrAlias: string): Promise<EnqueueResult> {
     const result = await nativeQueueIt.runAsync(clientId, eventOrAlias);
     return {
-      Token: result.token,
+      QueueITToken: result.queueittoken,
       State: result.state,
     };
   }

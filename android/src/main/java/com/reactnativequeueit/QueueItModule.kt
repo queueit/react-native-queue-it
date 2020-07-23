@@ -21,8 +21,8 @@ class QueueItModule(reactContext: ReactApplicationContext)
   }
 
   @ReactMethod
-  fun enableTesting() {
-    QueueService.IsTest = true
+  fun enableTesting(value: Boolean) {
+    QueueService.IsTest = value
   }
 
   @ReactMethod
@@ -31,7 +31,7 @@ class QueueItModule(reactContext: ReactApplicationContext)
       override fun onQueuePassed(queuePassedInfo: QueuePassedInfo?) {
         handler.post(Runnable {
           val params = Arguments.createMap()
-          params.putString("token", queuePassedInfo?.queueItToken)
+          params.putString("queueittoken", queuePassedInfo?.queueItToken)
           params.putString("state", EnqueueResultState.Passed.name)
           promise.resolve(params)
         })
@@ -40,7 +40,7 @@ class QueueItModule(reactContext: ReactApplicationContext)
       override fun onQueueItUnavailable() {
         handler.post(Runnable {
           val params = Arguments.createMap()
-          params.putNull("token")
+          params.putNull("queueittoken")
           params.putString("state", EnqueueResultState.Unavailable.name)
           promise.resolve(params)
         })
@@ -54,7 +54,7 @@ class QueueItModule(reactContext: ReactApplicationContext)
       override fun onQueueDisabled() {
         handler.post(Runnable {
           val params = Arguments.createMap()
-          params.putNull("token")
+          params.putNull("queueittoken")
           params.putString("state", EnqueueResultState.Disabled.name)
           promise.resolve(params)
         })
