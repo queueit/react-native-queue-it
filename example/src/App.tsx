@@ -40,7 +40,7 @@ class App extends Component<{}, AppState> {
           console.log('queue is disabled');
           break;
         case EnqueueResultState.Passed:
-          console.log(`user got his turn, with token: ${enqueueResult.Token}`);
+          console.log(`user got his turn, with Queueittoken: ${enqueueResult.Queueittoken}`);
           break;
         case EnqueueResultState.Unavailable:
           console.log('queue is unavailable');

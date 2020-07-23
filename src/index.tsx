@@ -18,7 +18,7 @@ export enum EnqueueResultState {
 }
 
 export interface EnqueueResult {
-  Token: string;
+  Queueittoken: string;
   State: EnqueueResultState;
 }
 
@@ -30,7 +30,7 @@ class QueueItEngine {
   async run(clientId: string, eventOrAlias: string): Promise<EnqueueResult> {
     const result = await nativeQueueIt.runAsync(clientId, eventOrAlias);
     return {
-      Token: result.token,
+      Queueittoken: result.queueittoken,
       State: result.state,
     };
   }

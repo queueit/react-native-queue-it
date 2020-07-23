@@ -54,7 +54,7 @@ RCT_REMAP_METHOD(runAsync,
                 NSLog(@"%ld", (long)[error code]);
                 NSLog(@"Network unavailable was caught in DetailsViewController");
                 NSLog(@"isRequestInProgress - %@", self.engine.isRequestInProgress ? @"YES" : @"NO");
-                resolve(@{@"token": @"", @"state": ENQUEUE_STATE(Unavailable)});
+                resolve(@{@"queueittoken": @"", @"state": ENQUEUE_STATE(Unavailable)});
             }
             else if ([error code] == RequestAlreadyInProgress) {
                 // Thrown when request to Queue-It has already been made and currently in progress. In general you can ignore this.
@@ -74,7 +74,7 @@ RCT_REMAP_METHOD(runAsync,
 }
 
 - (void)notifyYourTurn:(QueuePassedInfo *)queuePassedInfo {
-    self.resolve(@{@"token": queuePassedInfo.queueitToken, @"state": ENQUEUE_STATE(Passed)});
+    self.resolve(@{@"queueittoken": queuePassedInfo.queueitToken, @"state": ENQUEUE_STATE(Passed)});
 }
 
 - (void)notifyQueueViewWillOpen {
@@ -82,11 +82,11 @@ RCT_REMAP_METHOD(runAsync,
 }
 
 - (void)notifyQueueDisabled {
-    self.resolve(@{@"token": @"", @"state": ENQUEUE_STATE(Disabled)});
+    self.resolve(@{@"queueittoken": @"", @"state": ENQUEUE_STATE(Disabled)});
 }
 
 - (void)notifyQueueITUnavailable:(NSString *)errorMessage {
-    id result = @{@"token": @"", @"state": ENQUEUE_STATE(Unavailable)};
+    id result = @{@"queueittoken": @"", @"state": ENQUEUE_STATE(Unavailable)};
     self.resolve(result);
 }
 
