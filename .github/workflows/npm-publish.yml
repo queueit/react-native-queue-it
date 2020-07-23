@@ -14,10 +14,10 @@ jobs:
       uses: actions/setup-node@master
       with:
         node-version: '12'
-    - name: Install packages
-      run: yarn
     - name: Install example packages
       run: cd example; yarn
+    - name: Install packages
+      run: yarn
     - name: Publish if version has been updated
       uses: pascalgn/npm-publish-action@4f4bf159e299f65d21cd1cbd96fc5d53228036df
       with: # All of theses inputs are optional
