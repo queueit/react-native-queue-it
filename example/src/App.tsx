@@ -50,7 +50,9 @@ class App extends Component<{}, AppState> {
           console.log('queue is disabled');
           break;
         case EnqueueResultState.Passed:
-          console.log(`user got his turn, with QueueITToken: ${enqueueResult.QueueITToken}`);
+          console.log(`
+          user got his turn, with QueueITToken: ${enqueueResult.QueueITToken}
+          `);
           break;
         case EnqueueResultState.Unavailable:
           console.log('queue is unavailable');
@@ -72,8 +74,8 @@ class App extends Component<{}, AppState> {
   toggleTesting = () => {
     const newT = !this.state.isTesting;
     QueueIt.enableTesting(newT);
-    this.setState({ isTesting: newT })
-  }
+    this.setState({ isTesting: newT });
+  };
 
   render() {
     return (
@@ -104,10 +106,13 @@ class App extends Component<{}, AppState> {
               </View>
               <View style={styles.container}>
                 <Text>
-                  <CheckBox style={styles.mr10} value={this.state.isTesting} onValueChange={() => this.toggleTesting()} />
+                  <CheckBox
+                    style={styles.mr10}
+                    value={this.state.isTesting}
+                    onValueChange={() => this.toggleTesting()}
+                  />
                   Enable testing
                 </Text>
-                
               </View>
               <View style={styles.margined}>
                 <Button onPress={this.enqueue} title="Enqueue" />
@@ -125,7 +130,7 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.lighter,
   },
   mr10: {
-    marginRight: 10
+    marginRight: 10,
   },
   container: {
     flex: 1,
