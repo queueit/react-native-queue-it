@@ -19,7 +19,7 @@ jobs:
     - name: Install packages
       run: yarn
     - name: Publish release to npm
-      run: yarn publish --non-interactive
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Leave this as is, it's automatically generated
         NPM_AUTH_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }} # You need to set this in your repo settings
+      run: yarn publish --non-interactive
