@@ -75,7 +75,11 @@ RCT_REMAP_METHOD(runAsync,
 }
 
 - (void)notifyYourTurn:(QueuePassedInfo *)queuePassedInfo {
-    self.resolve(@{@"queueittoken": queuePassedInfo.queueitToken, @"state": ENQUEUE_STATE(Passed)});
+    NSString *queueItToken = queuePassedInfo.queueitToken;
+    if(queueItToken==nil){
+        queueItToken = @"";
+    }
+    self.resolve(@{@"queueittoken": queueItToken, @"state": ENQUEUE_STATE(Passed)});
 }
 
 - (void)notifyQueueViewWillOpen {

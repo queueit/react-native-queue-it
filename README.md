@@ -31,7 +31,7 @@ Once the user gets in a queue, he's shown a different activity `QueueActivity` ,
 ```
 
 ## Usage
-
+To use this library, you first have to make sure your integration method is **KnownUser**.  
 To protect parts of your application you'll need to make a `QueueIt.run` call and await it's result.
 Once the async call completes, the user has gone through the queue and you get a **QueueITToken** for this session.
 
