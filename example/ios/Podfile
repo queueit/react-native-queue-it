@@ -67,6 +67,4 @@ target 'QueueItExample' do
   post_install do |installer|
     flipper_post_install(installer)
   end
-  # Our pods
-  pod 'QueueITLibrary', '~>3.0.1'
 end
