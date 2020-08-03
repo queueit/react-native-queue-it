@@ -7,8 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5E555C0D2413F4C50049A1A2 /* QueueIt.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3E7B5891CC2AC0600A0062D /* QueueIt.mm */; };
 		18773B298623488290CCD286 /* libRNCCheckbox.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A6FDCED14BDB4B299F2F1D7D /* libRNCCheckbox.a */; };
+		5295A2F3CE55EF0793F82A93 /* Pods_QueueIt.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 71ED6E094C495D3CA85BF0E3 /* Pods_QueueIt.framework */; };
+		5E555C0D2413F4C50049A1A2 /* QueueIt.mm in Sources */ = {isa = PBXBuildFile; fileRef = B3E7B5891CC2AC0600A0062D /* QueueIt.mm */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,10 +26,13 @@
 
 /* Begin PBXFileReference section */
 		134814201AA4EA6300B7C361 /* libQueueIt.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libQueueIt.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		6DEF5ABB5D6092277FBEC592 /* Pods-QueueIt.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QueueIt.release.xcconfig"; path = "Target Support Files/Pods-QueueIt/Pods-QueueIt.release.xcconfig"; sourceTree = "<group>"; };
+		71ED6E094C495D3CA85BF0E3 /* Pods_QueueIt.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_QueueIt.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		9D78454FF3D2102FE629DC2F /* Pods-QueueIt.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-QueueIt.debug.xcconfig"; path = "Target Support Files/Pods-QueueIt/Pods-QueueIt.debug.xcconfig"; sourceTree = "<group>"; };
+		A6FDCED14BDB4B299F2F1D7D /* libRNCCheckbox.a */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = archive.ar; name = libRNCCheckbox.a; path = libRNCCheckbox.a; sourceTree = "<group>"; };
 		B3E7B5881CC2AC0600A0062D /* QueueIt.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = QueueIt.h; sourceTree = "<group>"; };
 		B3E7B5891CC2AC0600A0062D /* QueueIt.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = QueueIt.mm; sourceTree = "<group>"; };
-		D913A4971EFB4565861D3D40 /* RNCCheckbox.xcodeproj */ = {isa = PBXFileReference; name = "RNCCheckbox.xcodeproj"; path = "../node_modules/@react-native-community/checkbox/ios/RNCCheckbox.xcodeproj"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = wrapper.pb-project; explicitFileType = undefined; includeInIndex = 0; };
-		A6FDCED14BDB4B299F2F1D7D /* libRNCCheckbox.a */ = {isa = PBXFileReference; name = "libRNCCheckbox.a"; path = "libRNCCheckbox.a"; sourceTree = "<group>"; fileEncoding = undefined; lastKnownFileType = archive.ar; explicitFileType = undefined; includeInIndex = 0; };
+		D913A4971EFB4565861D3D40 /* RNCCheckbox.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNCCheckbox.xcodeproj; path = "../node_modules/@react-native-community/checkbox/ios/RNCCheckbox.xcodeproj"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -37,18 +41,36 @@
 			buildActionMask = 2147483647;
 			files = (
 				18773B298623488290CCD286 /* libRNCCheckbox.a in Frameworks */,
+				5295A2F3CE55EF0793F82A93 /* Pods_QueueIt.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		0317D0FB28724FD288AE2E52 /* Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				D913A4971EFB4565861D3D40 /* RNCCheckbox.xcodeproj */,
+			);
+			name = Libraries;
+			path = "";
+			sourceTree = "<group>";
+		};
 		134814211AA4EA7D00B7C361 /* Products */ = {
 			isa = PBXGroup;
 			children = (
 				134814201AA4EA6300B7C361 /* libQueueIt.a */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		1596A132FAB32BB8F833929D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				71ED6E094C495D3CA85BF0E3 /* Pods_QueueIt.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		58B511D21A9E6C8500147676 = {
@@ -58,17 +80,20 @@
 				B3E7B5891CC2AC0600A0062D /* QueueIt.mm */,
 				134814211AA4EA7D00B7C361 /* Products */,
 				0317D0FB28724FD288AE2E52 /* Libraries */,
+				A162A6ADFB0B3C6175389366 /* Pods */,
+				1596A132FAB32BB8F833929D /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
-		0317D0FB28724FD288AE2E52 /* Libraries */ = {
-			isa = "PBXGroup";
+		A162A6ADFB0B3C6175389366 /* Pods */ = {
+			isa = PBXGroup;
 			children = (
-				D913A4971EFB4565861D3D40 /* RNCCheckbox.xcodeproj */,
+				9D78454FF3D2102FE629DC2F /* Pods-QueueIt.debug.xcconfig */,
+				6DEF5ABB5D6092277FBEC592 /* Pods-QueueIt.release.xcconfig */,
 			);
-			name = Libraries;
+			name = Pods;
+			path = Pods;
 			sourceTree = "<group>";
-			path = "";
 		};
 /* End PBXGroup section */
 
@@ -77,6 +102,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 58B511EF1A9E6C8500147676 /* Build configuration list for PBXNativeTarget "QueueIt" */;
 			buildPhases = (
+				AB09506A1AC8908B6AEA9A20 /* [CP] Check Pods Manifest.lock */,
 				58B511D71A9E6C8500147676 /* Sources */,
 				58B511D81A9E6C8500147676 /* Frameworks */,
 				58B511D91A9E6C8500147676 /* CopyFiles */,
@@ -121,6 +147,31 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		AB09506A1AC8908B6AEA9A20 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-QueueIt-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		58B511D71A9E6C8500147676 /* Sources */ = {
@@ -229,6 +280,7 @@
 		};
 		58B511F01A9E6C8500147676 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 9D78454FF3D2102FE629DC2F /* Pods-QueueIt.debug.xcconfig */;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",
@@ -248,6 +300,7 @@
 		};
 		58B511F11A9E6C8500147676 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6DEF5ABB5D6092277FBEC592 /* Pods-QueueIt.release.xcconfig */;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = (
 					"$(inherited)",

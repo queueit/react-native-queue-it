@@ -1,8 +1,8 @@
 #import <React/RCTBridgeModule.h>
 #import <React/RCTEventEmitter.h>
 #import <React/RCTUtils.h>
-#import <QueueITLibrary/QueueITEngine.h>
-#import <QueueITLibrary/QueueService.h>
+#import <QueueITEngine.h>
+#import <QueueService.h>
 #define ENQUEUE_STATE(x) \
     (EnqueueResultState_toString[x])
 
