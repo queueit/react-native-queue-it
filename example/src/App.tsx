@@ -29,7 +29,7 @@ class App extends Component<{}, AppState> {
     };
   }
   componentDidMount() {
-    //QueueIt.enableTesting();
+    //QueueIt.enableTesting(true);
   }
 
   enqueue = async () => {

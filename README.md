@@ -12,7 +12,9 @@ Before starting please download the whitepaper **Mobile App Integration** from t
 
 Using npm you can install the module:
 ``` sh
-npm install react-native-queue-it
+npm install --save react-native-queue-it
+#On iOS
+cd ios && pod install
 ```
 
 If you're using Android, the library also needs network state information so you'll need to include these permissions in your app's manifest file:
