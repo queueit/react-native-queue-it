@@ -1,6 +1,6 @@
 {
   "name": "react-native-queue-it",
-  "version": "0.1.17",
+  "version": "0.1.18",
   "description": "React Native Module for integrating Queue-it's virtual waiting room into React Native apps.",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",

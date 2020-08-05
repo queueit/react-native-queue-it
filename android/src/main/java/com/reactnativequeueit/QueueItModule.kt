@@ -36,7 +36,8 @@ class QueueItModule(reactContext: ReactApplicationContext)
       override fun onQueuePassed(queuePassedInfo: QueuePassedInfo?) {
         handler.post(Runnable {
           val params = Arguments.createMap()
-          params.putString("queueittoken", queuePassedInfo?.queueItToken)
+          val token = if (queuePassedInfo?.queueItToken!=null) queuePassedInfo.queueItToken else ""
+          params.putString("queueittoken", token)
           params.putString("state", EnqueueResultState.Passed.name)
           promise.resolve(params)
         })
