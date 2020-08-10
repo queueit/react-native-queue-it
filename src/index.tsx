@@ -27,8 +27,8 @@ class QueueItEngine {
     nativeQueueIt.enableTesting(value);
   }
 
-  async run(clientId: string, eventOrAlias: string): Promise<EnqueueResult> {
-    const result = await nativeQueueIt.runAsync(clientId, eventOrAlias);
+  async run(customerId: string, eventOrAliasId: string): Promise<EnqueueResult> {
+    const result = await nativeQueueIt.runAsync(customerId, eventOrAliasId);
     return {
       QueueITToken: result.queueittoken,
       State: result.state,
