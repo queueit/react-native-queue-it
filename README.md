@@ -59,8 +59,8 @@ enqueue = async () => {
         console.log('user exited the line');
       });
       const enqueueResult = await QueueIt.run(
-        this.state.clientId,
-        this.state.eventOrAlias
+        this.state.customerId,
+        this.state.eventOrAliasId
       );
       switch (enqueueResult.State) {
         case EnqueueResultState.Disabled:
