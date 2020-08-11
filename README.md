@@ -17,14 +17,7 @@ npm install --save react-native-queue-it
 cd ios && pod install
 ```
 
-If you're using Android, the library also needs network state information so you'll need to include these permissions in your app's manifest file:
-
-``` xml
-<uses-permission android:name="android.permission.INTERNET" />
-<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-```
-
-Once the user gets in a queue, he's shown a different activity `QueueActivity` , so you'll need to include it in your manifest also.
+When Android is used, the following activity also needs to be included in the application's manifest file.
 
 ``` xml
 <activity android:name="com.queue_it.androidsdk.QueueActivity"/>
