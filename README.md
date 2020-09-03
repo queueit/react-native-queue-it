@@ -50,9 +50,15 @@ enqueue = async () => {
       QueueIt.once('userExited', () => {
         console.log('user exited the line');
       });
+      //Optional layout name that should be used for the waiting room page
+      const layoutName = "";
+      //Optional language for the waiting room page
+      const language = "";
       const enqueueResult = await QueueIt.run(
         this.state.customerId,
-        this.state.eventOrAliasId
+        this.state.eventOrAliasId,
+        layoutName,
+        language
       );
       switch (enqueueResult.State) {
         case EnqueueResultState.Disabled:
