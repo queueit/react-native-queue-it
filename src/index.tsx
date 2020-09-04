@@ -7,7 +7,12 @@ import {
 
 const nativeQueueIt = NativeModules.QueueIt as EventSubscriptionVendor & {
   enableTesting(value: boolean): void;
-  runAsync(clientId: string, eventOrAlias: string): Promise<any>;
+  runAsync(
+    clientId: string,
+    eventOrAlias: string,
+    layoutName?: string,
+    language?: string
+  ): Promise<any>;
 };
 const queueItEventEmitter = new NativeEventEmitter(nativeQueueIt);
 
@@ -27,8 +32,19 @@ class QueueItEngine {
     nativeQueueIt.enableTesting(value);
   }
 
-  async run(customerId: string, eventOrAliasId: string): Promise<EnqueueResult> {
-    const result = await nativeQueueIt.runAsync(customerId, eventOrAliasId);
+  async run(
+    customerId: string,
+    eventOrAliasId: string,
+    layoutName?: string,
+    language?: string
+  ): Promise<EnqueueResult> {
+    const result = await nativeQueueIt.runAsync(
+      customerId,
+      eventOrAliasId,
+      layoutName,
+      language
+    );
+
     return {
       QueueITToken: result.queueittoken,
       State: result.state,

@@ -30,10 +30,10 @@ RCT_REMAP_METHOD(enableTesting,
 RCT_REMAP_METHOD(runAsync,
                  runAsync:(nonnull NSString*) customerId
                  eventOrAliasId:(nonnull NSString*) eventOrAliasId
+                 layoutName:(NSString*) layoutName
+                 language: (NSString*) language
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject){
-    NSString* layoutName = nil; // Optional (pass nil if no layout specified)
-    NSString* language = nil; // Optional (pass nil if no language specified)
 
     UIViewController* vc = RCTPresentedViewController();
     self.engine = [[QueueITEngine alloc]initWithHost:vc customerId:customerId eventOrAliasId:eventOrAliasId layoutName:layoutName language:language]; //ARC
