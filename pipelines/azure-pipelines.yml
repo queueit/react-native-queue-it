@@ -20,5 +20,7 @@ steps:
   displayName: 'Install packages'
 
 - script: |
-    yarn publish --non-interactive
+    npm run release
   displayName: 'publish release to npm'
+  env:
+    NPM_AUTH_TOKEN: $(NPM_AUTH_TOKEN)
