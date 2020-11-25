@@ -103,12 +103,6 @@ RCT_REMAP_METHOD(runAsync,
 
 
 - (BOOL)notifyNavigation:(NSURL *)url {
-    if([[url absoluteString] isEqualToString: @"https://google.com/"]){
-        [self.engine close: ^{
-            NSLog(@"Closed..");
-        }];
-        return YES;
-    }
     return NO;
 }
 
