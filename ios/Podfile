@@ -8,5 +8,5 @@ target 'QueueIt' do
   # Pods for QueueIt
   
   # Our pods
-  pod 'QueueITLibrary', '~>3.0.1'
+  pod 'QueueITLibrary', '~>3.0.4'
 end

@@ -14,6 +14,6 @@ typedef enum {
 
 extern NSString * const EnqueueResultState_toString[];
 
-@interface QueueIt : RCTEventEmitter <RCTBridgeModule, QueuePassedDelegate, QueueViewWillOpenDelegate, QueueDisabledDelegate, QueueITUnavailableDelegate, QueueUserExitedDelegate>
+@interface QueueIt : RCTEventEmitter <RCTBridgeModule, QueuePassedDelegate, QueueViewWillOpenDelegate, QueueDisabledDelegate, QueueITUnavailableDelegate, QueueUserExitedDelegate, QueueNavigationActionDelegate, QueueViewClosedDelegate>
 
 @end
