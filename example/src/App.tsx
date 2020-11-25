@@ -43,7 +43,8 @@ class App extends Component<{}, AppState> {
       });
       const enqueueResult = await QueueIt.run(
         this.state.clientId,
-        this.state.eventOrAlias
+        this.state.eventOrAlias,
+        'mobile'
       );
       switch (enqueueResult.State) {
         case EnqueueResultState.Disabled:

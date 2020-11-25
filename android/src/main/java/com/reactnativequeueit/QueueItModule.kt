@@ -27,29 +27,29 @@ class QueueItModule(reactContext: ReactApplicationContext)
 
   @ReactMethod
   fun runAsync(customerId: String, eventAlias: String, layoutName: String?, language: String?, promise: Promise) {
-    val qListener = object : QueueListener {
+    val qListener = object : QueueListener() {
       override fun onUserExited() {
         val params = Arguments.createMap()
         sendEvent(context, "userExited", params)
       }
 
       override fun onQueuePassed(queuePassedInfo: QueuePassedInfo?) {
-        handler.post(Runnable {
+        handler.post {
           val params = Arguments.createMap()
           val token = if (queuePassedInfo?.queueItToken!=null) queuePassedInfo.queueItToken else ""
           params.putString("queueittoken", token)
           params.putString("state", EnqueueResultState.Passed.name)
           promise.resolve(params)
-        })
+        }
       }
 
       override fun onQueueItUnavailable() {
-        handler.post(Runnable {
+        handler.post {
           val params = Arguments.createMap()
           params.putNull("queueittoken")
           params.putString("state", EnqueueResultState.Unavailable.name)
           promise.resolve(params)
-        })
+        }
       }
 
       override fun onQueueViewWillOpen() {
@@ -58,25 +58,25 @@ class QueueItModule(reactContext: ReactApplicationContext)
       }
 
       override fun onQueueDisabled() {
-        handler.post(Runnable {
+        handler.post {
           val params = Arguments.createMap()
           params.putNull("queueittoken")
           params.putString("state", EnqueueResultState.Disabled.name)
           promise.resolve(params)
-        })
+        }
       }
 
       override fun onError(error: Error?, errorMessage: String?) {
-        handler.post(Runnable {
+        handler.post {
           promise.reject("error", errorMessage)
-        })
+        }
       }
     }
 
-    handler.post(Runnable {
+    handler.post {
       val queueEngine = QueueITEngine(context.currentActivity, customerId, eventAlias, layoutName, language, qListener)
       queueEngine.run(context.currentActivity)
-    })
+    }
   }
 
   private fun sendEvent(reactContext: ReactContext,
