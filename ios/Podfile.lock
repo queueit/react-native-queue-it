@@ -1,16 +1,16 @@
 PODS:
-  - QueueITLibrary (3.0.4)
+  - QueueITLibrary (3.0.5)
 
 DEPENDENCIES:
-  - QueueITLibrary (~> 3.0.4)
+  - QueueITLibrary (~> 3.0.5)
 
 SPEC REPOS:
   trunk:
     - QueueITLibrary
 
 SPEC CHECKSUMS:
-  QueueITLibrary: 658775740dcc672953ecf20da7002eb465ac5a98
+  QueueITLibrary: 2f056cf4cec6883774b464acfcab4eb389891330
 
-PODFILE CHECKSUM: 071e1a5db24d5c38e420d6247163daae893f568f
+PODFILE CHECKSUM: d38c0b9f6021c4a9b2c5e3bf443845a9a7d1b8fe
 
-COCOAPODS: 1.10.0
+COCOAPODS: 1.10.1

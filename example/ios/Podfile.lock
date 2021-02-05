@@ -234,7 +234,7 @@ PODS:
     - React-cxxreact (= 0.62.2)
     - React-jsi (= 0.62.2)
   - React-jsinspector (0.62.2)
-  - react-native-queue-it (0.1.15):
+  - react-native-queue-it (0.1.18):
     - QueueITLibrary
     - React
   - React-RCTActionSheet (0.62.2):
@@ -438,7 +438,7 @@ SPEC CHECKSUMS:
   React-jsi: b6dc94a6a12ff98e8877287a0b7620d365201161
   React-jsiexecutor: 1540d1c01bb493ae3124ed83351b1b6a155db7da
   React-jsinspector: 512e560d0e985d0e8c479a54a4e5c147a9c83493
-  react-native-queue-it: 8a555faf9c3b0da20a728e18b7b464994b0bc107
+  react-native-queue-it: 625fd7ea0c8ba2b71766243f32007a766bbda2ed
   React-RCTActionSheet: f41ea8a811aac770e0cc6e0ad6b270c644ea8b7c
   React-RCTAnimation: 49ab98b1c1ff4445148b72a3d61554138565bad0
   React-RCTBlob: a332773f0ebc413a0ce85942a55b064471587a71
@@ -455,4 +455,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 3df8315738742626c88ee457f0820fd6b7c7a2f8
 
-COCOAPODS: 1.9.3
+COCOAPODS: 1.10.1

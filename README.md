@@ -56,7 +56,7 @@ enqueue = async () => {
       const language = null;
       const enqueueResult = await QueueIt.run(
         this.state.customerId,
-        this.state.eventOrAliasId,
+        this.state.waitingRoomIdOrAlias,
         layoutName,
         language
       );
