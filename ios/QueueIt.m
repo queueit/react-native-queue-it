@@ -43,7 +43,6 @@ RCT_REMAP_METHOD(runAsync,
     self.engine.queueDisabledDelegate = self; // Invoked to notify that queue is disabled
     self.engine.queueITUnavailableDelegate = self; // Invoked in case QueueIT is unavailable (500 errors)
     self.engine.queueUserExitedDelegate = self; // Invoked when user chooses to leave the queue
-    self.engine.queueNavigationActionDelegate = self;
     self.engine.queueViewClosedDelegate = self;
     self.resolve = resolve;
     self.reject = reject;
