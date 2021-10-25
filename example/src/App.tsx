@@ -11,12 +11,18 @@ import {
 import CheckBox from '@react-native-community/checkbox';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 
-import { QueueIt, EnqueueResultState } from 'react-native-queue-it';
+import {
+  QueueIt,
+  EnqueueResultState,
+  EnqueueResult,
+} from 'react-native-queue-it';
 
 type AppState = {
   clientId: string;
   eventOrAlias: string;
   isTesting: boolean;
+  enqueueToken: string;
+  enqueueKey: string;
 };
 
 class App extends Component<{}, AppState> {
@@ -26,11 +32,15 @@ class App extends Component<{}, AppState> {
       clientId: '',
       eventOrAlias: '',
       isTesting: false,
+      enqueueToken: '',
+      enqueueKey: '',
     };
   }
-  componentDidMount() {
-    //QueueIt.enableTesting();
-  }
+  componentDidMount() {}
+
+  getEnqueueToken = () => 'myToken';
+
+  getEnqueueKey = () => 'myKey';
 
   enqueue = async () => {
     try {
@@ -38,14 +48,29 @@ class App extends Component<{}, AppState> {
       QueueIt.once('openingQueueView', () => {
         console.log('opening queue page..');
       });
-      QueueIt.once('userExited', () => {
-        console.log('user exited the line');
-      });
-      const enqueueResult = await QueueIt.run(
-        this.state.clientId,
-        this.state.eventOrAlias,
-        'mobile'
-      );
+      let enqueueResult: EnqueueResult;
+
+      if (this.state.enqueueKey) {
+        enqueueResult = await QueueIt.runWithEnqueueKey(
+          this.state.clientId,
+          this.state.eventOrAlias,
+          this.getEnqueueKey(),
+          'mobile'
+        );
+      } else if (this.state.enqueueToken) {
+        enqueueResult = await QueueIt.runWithEnqueueToken(
+          this.state.clientId,
+          this.state.eventOrAlias,
+          this.getEnqueueToken(),
+          'mobile'
+        );
+      } else {
+        enqueueResult = await QueueIt.run(
+          this.state.clientId,
+          this.state.eventOrAlias,
+          'mobile'
+        );
+      }
       switch (enqueueResult.State) {
         case EnqueueResultState.Disabled:
           console.log('queue is disabled');
@@ -58,6 +83,9 @@ class App extends Component<{}, AppState> {
         case EnqueueResultState.Unavailable:
           console.log('queue is unavailable');
           break;
+        case EnqueueResultState.RestartedSession:
+          console.log('user decided to restart the session');
+          await this.enqueue();
       }
     } catch (e) {
       console.log(`error: ${e}`);
@@ -70,6 +98,14 @@ class App extends Component<{}, AppState> {
 
   onEventChange = (txt: string) => {
     this.setState({ eventOrAlias: txt });
+  };
+
+  onEnqueueKeyChange = (txt: string) => {
+    this.setState({ enqueueKey: txt });
+  };
+
+  onEnqueueTokenChange = (txt: string) => {
+    this.setState({ enqueueToken: txt });
   };
 
   toggleTesting = () => {
@@ -103,6 +139,20 @@ class App extends Component<{}, AppState> {
                 <TextInput
                   style={styles.inputBox}
                   onChangeText={(text) => this.onEventChange(text)}
+                />
+              </View>
+              <View style={styles.margined}>
+                <Text>Enqueue token</Text>
+                <TextInput
+                  style={styles.inputBox}
+                  onChangeText={(text) => this.onEnqueueTokenChange(text)}
+                />
+              </View>
+              <View style={styles.margined}>
+                <Text>Enqueue key</Text>
+                <TextInput
+                  style={styles.inputBox}
+                  onChangeText={(text) => this.onEnqueueKeyChange(text)}
                 />
               </View>
               <View style={styles.container}>

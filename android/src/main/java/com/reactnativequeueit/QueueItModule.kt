@@ -7,7 +7,7 @@ import com.queue_it.androidsdk.*
 
 
 enum class EnqueueResultState {
-  Passed, Disabled, Unavailable
+  Passed, Disabled, Unavailable, RestartedSession
 }
 
 class QueueItModule(reactContext: ReactApplicationContext)
@@ -26,8 +26,8 @@ class QueueItModule(reactContext: ReactApplicationContext)
   }
 
   @ReactMethod
-  fun runAsync(customerId: String, eventAlias: String, layoutName: String?, language: String?, promise: Promise) {
-    val qListener = object : QueueListener() {
+  fun getQueueListener(promise: Promise): QueueListener {
+    return object : QueueListener() {
       override fun onUserExited() {
         val params = Arguments.createMap()
         sendEvent(context, "userExited", params)
@@ -36,7 +36,7 @@ class QueueItModule(reactContext: ReactApplicationContext)
       override fun onQueuePassed(queuePassedInfo: QueuePassedInfo?) {
         handler.post {
           val params = Arguments.createMap()
-          val token = if (queuePassedInfo?.queueItToken!=null) queuePassedInfo.queueItToken else ""
+          val token = if (queuePassedInfo?.queueItToken != null) queuePassedInfo.queueItToken else ""
           params.putString("queueittoken", token)
           params.putString("state", EnqueueResultState.Passed.name)
           promise.resolve(params)
@@ -71,11 +71,39 @@ class QueueItModule(reactContext: ReactApplicationContext)
           promise.reject("error", errorMessage)
         }
       }
-    }
 
+      override fun onSessionRestart(queueITEngine: QueueITEngine?) {
+        handler.post {
+          val params = Arguments.createMap()
+          params.putNull("queueittoken")
+          params.putString("state", EnqueueResultState.RestartedSession.name)
+          promise.resolve(params)
+        }
+      }
+    }
+  }
+
+  @ReactMethod
+  fun runAsync(customerId: String, eventAlias: String, layoutName: String?, language: String?, promise: Promise) {
     handler.post {
-      val queueEngine = QueueITEngine(context.currentActivity, customerId, eventAlias, layoutName, language, qListener)
+      val queueEngine = QueueITEngine(context.currentActivity, customerId, eventAlias, layoutName, language, getQueueListener(promise))
       queueEngine.run(context.currentActivity)
+    }
+  }
+
+  @ReactMethod
+  fun runWithEnqueueTokenAsync(customerId: String, eventAlias: String, enqueueToken: String, layoutName: String?, language: String?, promise: Promise) {
+    handler.post {
+      val queueEngine = QueueITEngine(context.currentActivity, customerId, eventAlias, layoutName, language, getQueueListener(promise))
+      queueEngine.runWithEnqueueToken(context.currentActivity, enqueueToken)
+    }
+  }
+
+  @ReactMethod
+  fun runWithEnqueueKeyAsync(customerId: String, eventAlias: String, enqueueKey: String, layoutName: String?, language: String?, promise: Promise) {
+    handler.post {
+      val queueEngine = QueueITEngine(context.currentActivity, customerId, eventAlias, layoutName, language, getQueueListener(promise))
+      queueEngine.runWithEnqueueKey(context.currentActivity, enqueueKey)
     }
   }
 

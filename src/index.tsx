@@ -1,11 +1,13 @@
+/* exported EnqueueResultState.Passed */
 import {
   NativeModules,
+  NativeModule,
   EventSubscriptionVendor,
   NativeEventEmitter,
   EmitterSubscription,
 } from 'react-native';
 
-const nativeQueueIt = NativeModules.QueueIt as EventSubscriptionVendor & {
+interface NativeQueueItModule {
   enableTesting(value: boolean): void;
   runAsync(
     clientId: string,
@@ -13,13 +15,34 @@ const nativeQueueIt = NativeModules.QueueIt as EventSubscriptionVendor & {
     layoutName?: string,
     language?: string
   ): Promise<any>;
-};
+
+  runWithEnqueueKeyAsync(
+    clientId: string,
+    eventOrAlias: string,
+    enqueueKey: string,
+    layoutName?: string,
+    language?: string
+  ): Promise<any>;
+
+  runWithEnqueueTokenAsync(
+    clientId: string,
+    eventOrAlias: string,
+    enqueueToken: string,
+    layoutName?: string,
+    language?: string
+  ): Promise<any>;
+}
+
+const nativeQueueIt: EventSubscriptionVendor &
+  NativeModule &
+  NativeQueueItModule = NativeModules.QueueIt;
 const queueItEventEmitter = new NativeEventEmitter(nativeQueueIt);
 
 export enum EnqueueResultState {
   Passed = 'Passed',
   Disabled = 'Disabled',
   Unavailable = 'Unavailable',
+  RestartedSession = 'RestartedSession',
 }
 
 export interface EnqueueResult {
@@ -41,6 +64,48 @@ class QueueItEngine {
     const result = await nativeQueueIt.runAsync(
       customerId,
       eventOrAliasId,
+      layoutName,
+      language
+    );
+
+    return {
+      QueueITToken: result.queueittoken,
+      State: result.state,
+    };
+  }
+
+  async runWithEnqueueToken(
+    customerId: string,
+    eventOrAliasId: string,
+    enqueueToken: string,
+    layoutName?: string,
+    language?: string
+  ): Promise<EnqueueResult> {
+    const result = await nativeQueueIt.runWithEnqueueTokenAsync(
+      customerId,
+      eventOrAliasId,
+      enqueueToken,
+      layoutName,
+      language
+    );
+
+    return {
+      QueueITToken: result.queueittoken,
+      State: result.state,
+    };
+  }
+
+  async runWithEnqueueKey(
+    customerId: string,
+    eventOrAliasId: string,
+    enqueuekey: string,
+    layoutName?: string,
+    language?: string
+  ): Promise<EnqueueResult> {
+    const result = await nativeQueueIt.runWithEnqueueKeyAsync(
+      customerId,
+      eventOrAliasId,
+      enqueuekey,
       layoutName,
       language
     );
