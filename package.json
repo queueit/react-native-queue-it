@@ -42,7 +42,7 @@
     "android"
   ],
   "repository": "https://github.com/queueit/react-native-queue-it",
-  "author": "Vasil <vava@queue-it.com> (https://queue-it.com)",
+  "author": "Queue-it <dev@queue-it.com> (https://queue-it.com)",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/queueit/react-native-queue-it/issues"
