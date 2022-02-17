@@ -85,7 +85,7 @@ enqueue = async () => {
     }
     switch (enqueueResult.State) {
       case EnqueueResultState.Disabled:
-        console.log('queue is disabled');
+        console.log(`queue is disabled and QueueITToken is: ${enqueueResult.QueueITToken}`);
         break;
       case EnqueueResultState.Passed:
         console.log(
