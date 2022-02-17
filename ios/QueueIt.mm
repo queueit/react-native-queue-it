@@ -83,12 +83,12 @@ RCT_REMAP_METHOD(runAsync,
                  language: (NSString*) language
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject){
-    
+
     UIViewController* vc = RCTPresentedViewController();
     [self initializeEngine:vc customerId:customerId eventOrAliasId:eventOrAliasId layoutName:layoutName language:language];
     self.resolve = resolve;
     self.reject = reject;
-    
+
     NSError* error = nil;
     @try {
         BOOL success = [self.engine run:&error];
@@ -106,12 +106,12 @@ RCT_REMAP_METHOD(runWithEnqueueTokenAsync,
                  language: (NSString*) language
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject){
-    
+
     UIViewController* vc = RCTPresentedViewController();
     [self initializeEngine:vc customerId:customerId eventOrAliasId:eventOrAliasId layoutName:layoutName language:language];
     self.resolve = resolve;
     self.reject = reject;
-    
+
     NSError* error = nil;
     @try {
         BOOL success = [self.engine runWithEnqueueToken:enqueueToken error:&error];
@@ -129,12 +129,12 @@ RCT_REMAP_METHOD(runWithEnqueueKeyAsync,
                  language: (NSString*) language
                  withResolver:(RCTPromiseResolveBlock)resolve
                  withRejecter:(RCTPromiseRejectBlock)reject){
-    
+
     UIViewController* vc = RCTPresentedViewController();
     [self initializeEngine:vc customerId:customerId eventOrAliasId:eventOrAliasId layoutName:layoutName language:language];
     self.resolve = resolve;
     self.reject = reject;
-    
+
     NSError* error = nil;
     @try {
         BOOL success = [self.engine runWithEnqueueKey:enqueueKey error:&error];
@@ -161,8 +161,12 @@ RCT_REMAP_METHOD(runWithEnqueueKeyAsync,
     [self sendEventWithName:@"openingQueueView" body:@{}];
 }
 
-- (void)notifyQueueDisabled {
-    self.resolve(@{@"queueittoken": @"", @"state": ENQUEUE_STATE(Disabled)});
+- (void)notifyQueueDisabled:(QueueDisabledInfo *)queueDisabledInfo {
+    NSString *queueItToken = queueDisabledInfo.queueitToken;
+    if(queueItToken==nil){
+        queueItToken = @"";
+    }
+    self.resolve(@{@"queueittoken": queueItToken, @"state": ENQUEUE_STATE(Disabled)});
 }
 
 - (void)notifyQueueITUnavailable:(NSString *)errorMessage {

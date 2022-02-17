@@ -73,7 +73,9 @@ class App extends Component<{}, AppState> {
       }
       switch (enqueueResult.State) {
         case EnqueueResultState.Disabled:
-          console.log('queue is disabled');
+          console.log(
+            `queue is disabled and token is: ${enqueueResult.QueueITToken}`
+          );
           break;
         case EnqueueResultState.Passed:
           console.log(`

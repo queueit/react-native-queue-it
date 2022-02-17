@@ -57,10 +57,11 @@ class QueueItModule(reactContext: ReactApplicationContext)
         sendEvent(context, "openingQueueView", params)
       }
 
-      override fun onQueueDisabled() {
+      override fun onQueueDisabled(queueDisabledInfo: QueueDisabledInfo?) {
         handler.post {
           val params = Arguments.createMap()
-          params.putNull("queueittoken")
+          val token = if (queueDisabledInfo?.queueItToken != null) queueDisabledInfo.queueItToken else ""
+          params.putString("queueittoken", token)
           params.putString("state", EnqueueResultState.Disabled.name)
           promise.resolve(params)
         }

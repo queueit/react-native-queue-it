@@ -1,6 +1,6 @@
 {
   "name": "react-native-queue-it",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "React Native Module for integrating Queue-it's virtual waiting room into React Native apps.",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -105,7 +105,8 @@
       "plugin:jest/recommended"
     ],
     "rules": {
-      "comma-dangle": "off"
+      "comma-dangle": "off",
+      "no-unused-vars": "warn"
     },
     "env": {
       "jest/globals": true

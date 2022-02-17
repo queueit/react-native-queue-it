@@ -1,7 +1,6 @@
-/* exported EnqueueResultState.Passed */
+/* exported EnqueueResultState */
 import {
   NativeModules,
-  NativeModule,
   EventSubscriptionVendor,
   NativeEventEmitter,
   EmitterSubscription,
@@ -33,10 +32,9 @@ interface NativeQueueItModule {
   ): Promise<any>;
 }
 
-const nativeQueueIt: EventSubscriptionVendor &
-  NativeModule &
-  NativeQueueItModule = NativeModules.QueueIt;
-const queueItEventEmitter = new NativeEventEmitter(nativeQueueIt);
+const nativeQueueIt: EventSubscriptionVendor & NativeQueueItModule =
+  NativeModules.QueueIt;
+const queueItEventEmitter = new NativeEventEmitter(nativeQueueIt as any);
 
 export enum EnqueueResultState {
   Passed = 'Passed',
