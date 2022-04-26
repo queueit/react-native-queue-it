@@ -8,6 +8,9 @@ import {
 
 interface NativeQueueItModule {
   enableTesting(value: boolean): void;
+
+  setViewFrame(x: number, y: number, width: number, height: number): void;
+
   runAsync(
     clientId: string,
     eventOrAlias: string,
@@ -51,6 +54,10 @@ export interface EnqueueResult {
 class QueueItEngine {
   enableTesting(value: boolean): void {
     nativeQueueIt.enableTesting(value);
+  }
+
+  setViewFrame(x: number, y: number, width: number, height: number): void {
+    nativeQueueIt.setViewFrame(x, y, width, height);
   }
 
   async run(

@@ -49,7 +49,7 @@ class App extends Component<{}, AppState> {
         console.log('opening queue page..');
       });
       let enqueueResult: EnqueueResult;
-
+      QueueIt.setViewFrame(0, 100, -1, 150);
       if (this.state.enqueueKey) {
         enqueueResult = await QueueIt.runWithEnqueueKey(
           this.state.clientId,
