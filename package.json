@@ -133,6 +133,7 @@
     ]
   },
   "dependencies": {
+    "prop-types": "^15.8.1",
     "react-mixin": "^2.0.2"
   }
 }

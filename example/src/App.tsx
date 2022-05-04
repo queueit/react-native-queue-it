@@ -11,29 +11,27 @@ import {
 import CheckBox from '@react-native-community/checkbox';
 import { Colors } from 'react-native/Libraries/NewAppScreen';
 
-import {
-  QueueIt,
-  EnqueueResultState,
-  EnqueueResult,
-} from 'react-native-queue-it';
+import { EnqueueResult, EnqueueResultState, QueueIt, QueueitView } from 'react-native-queue-it';
 
 type AppState = {
-  clientId: string;
-  eventOrAlias: string;
+  customerId: string;
+  waitingRoomId: string;
   isTesting: boolean;
   enqueueToken: string;
   enqueueKey: string;
+  showQueue: boolean;
 };
 
 class App extends Component<{}, AppState> {
   constructor(props: any) {
     super(props);
     this.state = {
-      clientId: '',
-      eventOrAlias: '',
-      isTesting: false,
+      customerId: '',
+      waitingRoomId: '',
+      isTesting: true,
       enqueueToken: '',
       enqueueKey: '',
+      showQueue: false,
     };
   }
   componentDidMount() {}
@@ -45,61 +43,20 @@ class App extends Component<{}, AppState> {
   enqueue = async () => {
     try {
       console.log('going to queue-it');
-      QueueIt.once('openingQueueView', () => {
-        console.log('opening queue page..');
+      this.setState({
+        showQueue: true,
       });
-      let enqueueResult: EnqueueResult;
-      QueueIt.setViewFrame(0, 100, -1, 150);
-      if (this.state.enqueueKey) {
-        enqueueResult = await QueueIt.runWithEnqueueKey(
-          this.state.clientId,
-          this.state.eventOrAlias,
-          this.getEnqueueKey(),
-          'mobile'
-        );
-      } else if (this.state.enqueueToken) {
-        enqueueResult = await QueueIt.runWithEnqueueToken(
-          this.state.clientId,
-          this.state.eventOrAlias,
-          this.getEnqueueToken(),
-          'mobile'
-        );
-      } else {
-        enqueueResult = await QueueIt.run(
-          this.state.clientId,
-          this.state.eventOrAlias,
-          'mobile'
-        );
-      }
-      switch (enqueueResult.State) {
-        case EnqueueResultState.Disabled:
-          console.log(
-            `queue is disabled and token is: ${enqueueResult.QueueITToken}`
-          );
-          break;
-        case EnqueueResultState.Passed:
-          console.log(`
-          user got his turn, with QueueITToken: ${enqueueResult.QueueITToken}
-          `);
-          break;
-        case EnqueueResultState.Unavailable:
-          console.log('queue is unavailable');
-          break;
-        case EnqueueResultState.RestartedSession:
-          console.log('user decided to restart the session');
-          await this.enqueue();
-      }
     } catch (e) {
       console.log(`error: ${e}`);
     }
   };
 
   onClientChange = (txt: string) => {
-    this.setState({ clientId: txt });
+    this.setState({ customerId: txt });
   };
 
   onEventChange = (txt: string) => {
-    this.setState({ eventOrAlias: txt });
+    this.setState({ waitingRoomId: txt });
   };
 
   onEnqueueKeyChange = (txt: string) => {
@@ -116,7 +73,22 @@ class App extends Component<{}, AppState> {
     this.setState({ isTesting: newT });
   };
 
+  onQueueStatusChanged = (newStatus: EnqueueResult)=>{
+    console.log("Enqueue result: ", newStatus);
+    if(newStatus.State != EnqueueResultState.Passed){
+      console.warn("Got enqueue result different from passed!");
+    }
+    const shouldShowQueue = newStatus.State !== EnqueueResultState.Passed;
+    this.setState({
+      showQueue: shouldShowQueue
+    });
+  }
+
   render() {
+    const showQueue = this.state.showQueue;
+    QueueIt.enableTesting(this.state.isTesting);
+    console.log(this.state);
+    const QueueitViewComponent = QueueitView as any;
     return (
       <SafeAreaView>
         <ScrollView
@@ -124,11 +96,18 @@ class App extends Component<{}, AppState> {
           style={styles.scrollView}
         >
           <View style={styles.body}>
+          {showQueue && (
+                <QueueitViewComponent
+                  style={styles.queueItView}
+                  customerId={this.state.customerId}
+                  waitingRoomId={this.state.waitingRoomId}
+                  onStatusChanged={this.onQueueStatusChanged}
+                />
+              )}
             <View style={styles.sectionContainer}>
               <Text style={styles.sectionDescription}>
                 <Text style={styles.highlight}>QueueIt ReactNative Demo</Text>
               </Text>
-
               <View style={styles.margined}>
                 <Text>Client Id</Text>
                 <TextInput
@@ -179,6 +158,15 @@ class App extends Component<{}, AppState> {
 }
 
 const styles = StyleSheet.create({
+  queueItView: {
+    borderRadius: 10,
+    borderWidth: 1,
+    borderColor: "#fff",
+    flex: 1,
+    height: 252, 
+    backgroundColor: 'purple',
+    overflow: 'hidden'
+  },
   scrollView: {
     backgroundColor: Colors.lighter,
   },

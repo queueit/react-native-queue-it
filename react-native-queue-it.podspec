@@ -18,5 +18,5 @@ Pod::Spec.new do |s|
   
 
   s.dependency "React"
-  s.dependency "poc-1-QueueITLibrary"
+  s.dependency "QueueITLibrary"
 end

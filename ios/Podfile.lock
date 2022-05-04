@@ -1,24 +1,16 @@
 PODS:
-  - poc-1-QueueITLibrary (3.0.10.1)
+  - QueueITLibrary (3.0.13)
 
 DEPENDENCIES:
-  - poc-1-QueueITLibrary (from `https://github.com/queueit/ios-webui-sdk.git`, branch `poc-1`, tag `3.0.10.1`)
+  - QueueITLibrary (~> 3.0.13)
 
-EXTERNAL SOURCES:
-  poc-1-QueueITLibrary:
-    :branch: poc-1
-    :git: https://github.com/queueit/ios-webui-sdk.git
-    :tag: 3.0.10.1
-
-CHECKOUT OPTIONS:
-  poc-1-QueueITLibrary:
-    :commit: 41c87396b54a9e903b3e031e9de2d39c23f83344
-    :git: https://github.com/queueit/ios-webui-sdk.git
-    :tag: 3.0.10.1
+SPEC REPOS:
+  trunk:
+    - QueueITLibrary
 
 SPEC CHECKSUMS:
-  poc-1-QueueITLibrary: e0f64199ce0ce1117c816cd6d0a894b55cccfbdf
+  QueueITLibrary: b4fd3b38911e551e014acbd5ce3d201365871eee
 
-PODFILE CHECKSUM: 7d54f00624267303a7ad36706507382b19b90fe1
+PODFILE CHECKSUM: 8626fca42221ede4c697e60d0d66c7f240f70a5a
 
 COCOAPODS: 1.11.3

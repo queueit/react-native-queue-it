@@ -1,27 +1,149 @@
-
+resources:
+  repositories:
+    - repository: GithubRepo # The name used to reference this repository in the checkout step
+      type: github
+      endpoint: queueit
+      name: queueit/react-native-queue-it
 
 trigger: none
+
+variables:
+  - name: npm_token
+    value: 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
+  - name: release_repo
+    value: react-native-queue-it
+  - name: source_repo
+    value: app-sdk-react-native
+  - name: github_email
+    value: dev@queue-it.com
+  - name: github_name
+    value: queue-it
 
 pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '10.x'
-  displayName: 'Install Node.js'
+  - checkout: self
+  - checkout: GithubRepo
+    persistCredentials: true
+    clean: true
 
-- script: |
-    cd example
-    yarn
-  displayName: 'Install example packages'
+  - script: |
+      git config --global user.email $(GITHUB_EMAIL)
+      git config --global user.name $(GITHUB_NAME)
+    displayName: 'Setup git'
 
-- script: yarn
-  displayName: 'Install packages'
+  - script: |
+      # echo _auth=$(NPM_TOKEN) >> ~/.npmrc
+      # echo email=$(GITHUB_EMAIL) >> ~/.npmrc
+      echo always-auth=true >> ~/.npmrc
+      npm set //registry.npmjs.org/:_authToken $(NPM_TOKEN)
+      cat ~/.npmrc
+    displayName: 'Setup NPM auth'
 
-- script: |
-    yarn publish --non-interactive
-  displayName: 'publish release to npm'
-  env:
-    NPM_AUTH_TOKEN: $(NPM_AUTH_TOKEN)
-    GITHUB_TOKEN: $(GITHUB_TOKEN)
+  - script: |
+      git checkout master
+    workingDirectory: $(Agent.BuildDirectory)/s/$(release_repo)
+    displayName: 'Checking out release repository master'
+
+  - task: NodeTool@0
+    inputs:
+      versionSpec: '10.x'
+    displayName: 'Install Node.js'
+
+  - script: |
+      cd example
+      npm ci
+    displayName: 'Install example packages'
+    workingDirectory: $(Agent.BuildDirectory)/s/$(source_repo)
+
+  - script: |
+      npm install typescript
+      npm ci
+    displayName: 'Install npm tools'
+    workingDirectory: $(Agent.BuildDirectory)/s/$(source_repo)
+
+    # No artifacts so no need to build anything else
+  - script: |
+      npm run prepare
+    displayName: 'Build connector'
+    workingDirectory: $(Agent.BuildDirectory)/s/$(source_repo)
+
+  - script: |
+      npm test
+    workingDirectory: $(Agent.BuildDirectory)/s/$(source_repo)
+    displayName: 'Run tests'
+
+  - script: |
+      version=$(cat package.json | jq -r '.version')
+      echo "##vso[task.setvariable variable=VERSION]$version"
+    workingDirectory: $(Agent.BuildDirectory)/s/$(source_repo)
+    displayName: 'Export version variable'
+
+  # Copy files to release repository
+  - task: CopyFiles@2
+    inputs:
+      SourceFolder: $(Agent.BuildDirectory)/s/$(source_repo)
+      Contents: |
+        $(Agent.BuildDirectory)/s/$(source_repo)/android/**/*
+        $(Agent.BuildDirectory)/s/$(source_repo)/ios/**/*
+        $(Agent.BuildDirectory)/s/$(source_repo)/example/**/*
+        $(Agent.BuildDirectory)/s/$(source_repo)/src/**/*
+        $(Agent.BuildDirectory)/s/$(source_repo)/.gitignore
+        $(Agent.BuildDirectory)/s/$(source_repo)/.gitattributes
+        $(Agent.BuildDirectory)/s/$(source_repo)/.npmignore
+        $(Agent.BuildDirectory)/s/$(source_repo)/*.PNG
+        $(Agent.BuildDirectory)/s/$(source_repo)/*.png
+        $(Agent.BuildDirectory)/s/$(source_repo)/LICENSE
+        $(Agent.BuildDirectory)/s/$(source_repo)/README.md
+        $(Agent.BuildDirectory)/s/$(source_repo)/babel.config.js
+        $(Agent.BuildDirectory)/s/$(source_repo)/package*.json
+        $(Agent.BuildDirectory)/s/$(source_repo)/*.podspec
+        $(Agent.BuildDirectory)/s/$(source_repo)/tsconfig.json
+        $(Agent.BuildDirectory)/s/$(source_repo)/*.lock
+      TargetFolder: $(Agent.BuildDirectory)/s/$(release_repo)
+      OverWrite: true
+    displayName: 'Copy files from source to release repository'
+
+
+  - script: |
+      cd example
+      npm ci
+      cd ..
+      npm ci
+    displayName: 'Install npm dependencies in release repo'
+    workingDirectory: $(Agent.BuildDirectory)/s/$(release_repo)
+
+  # Commit release repository using commit tag
+  - script: |
+      git add . --all
+      git commit -m "Preparing release $(VERSION)"
+      releaseTarget=$(git rev-parse HEAD)
+      echo "##vso[task.setvariable variable=RELEASE_TARGET]$releaseTarget"
+      git tag $(VERSION)
+      git push --force origin
+      git push origin $(VERSION)
+      git --no-pager log --decorate=short --pretty=oneline -n3
+    displayName: 'Commit, tag and push release repository changes'
+    workingDirectory: $(Agent.BuildDirectory)/s/$(release_repo)
+
+  - task: GitHubRelease@1
+    inputs:
+      gitHubConnection: queueit
+      repositoryName: "queueit/$(release_repo)"
+      isDraft: true
+      title: $(VERSION)
+      releaseNotesInline: "### Release notes: "
+      releaseNotesSource: inline
+      assets: $(Agent.BuildDirectory)/s/$(source_repo)/dist/*
+      action: create
+      tagSource: userSpecifiedTag
+      tag: $(VERSION)
+      addChangeLog: false
+      target: $(RELEASE_TARGET)
+    displayName: "Create release draft"
+
+  - script: |
+      npm publish
+    displayName: 'publish release to npm'
+    workingDirectory: $(Agent.BuildDirectory)/s/$(release_repo)

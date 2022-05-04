@@ -8,5 +8,5 @@ target 'QueueIt' do
   # Pods for QueueIt
 
   # Our pods
-  pod 'poc-1-QueueITLibrary', :git => "https://github.com/queueit/ios-webui-sdk.git", :branch => "poc-1", :tag => "3.0.10.1"
+  pod 'QueueITLibrary', '~>3.0.13'
 end

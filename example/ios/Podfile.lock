@@ -11,7 +11,7 @@ PODS:
     - ReactCommon/turbomodule/core (= 0.66.1)
   - fmt (6.2.1)
   - glog (0.3.5)
-  - poc-1-QueueITLibrary (3.0.10.1)
+  - QueueITLibrary (3.0.13)
   - RCT-Folly (2021.06.28.00-v2):
     - boost
     - DoubleConversion
@@ -211,7 +211,7 @@ PODS:
   - React-logger (0.66.1):
     - glog
   - react-native-queue-it (1.1.6):
-    - poc-1-QueueITLibrary
+    - QueueITLibrary
     - React
   - React-perflogger (0.66.1)
   - React-RCTActionSheet (0.66.1):
@@ -321,7 +321,7 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - fmt
-    - poc-1-QueueITLibrary
+    - QueueITLibrary
 
 EXTERNAL SOURCES:
   boost:
@@ -396,7 +396,7 @@ SPEC CHECKSUMS:
   FBReactNativeSpec: 74c869e2cffa2ffec685cd1bac6788c021da6005
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
   glog: 5337263514dd6f09803962437687240c5dc39aa4
-  poc-1-QueueITLibrary: e0f64199ce0ce1117c816cd6d0a894b55cccfbdf
+  QueueITLibrary: b4fd3b38911e551e014acbd5ce3d201365871eee
   RCT-Folly: a21c126816d8025b547704b777a2ba552f3d9fa9
   RCTRequired: 3cc065b52aa18db729268b9bd78a2feffb4d0f91
   RCTTypeSafety: 3c4fc37d5dea452d2ef17324db5504ec2f05083a
@@ -409,7 +409,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: db2f6e22a534d466fc0e34e622df47d9d20bab2f
   React-jsinspector: 8c0517dee5e8c70cd6c3066f20213ff7ce54f176
   React-logger: bfddd3418dc1d45b77b822958f3e31422e2c179b
-  react-native-queue-it: 49cb4bbcbb8157220ca12a40fdad04fb3666d5b3
+  react-native-queue-it: e09f2cdeff9386db7ac4efb60b602fb5f25e1d6a
   React-perflogger: fcac6090a80e3d967791b4c7f1b1a017f9d4a398
   React-RCTActionSheet: caf5913d9f9e605f5467206cf9d1caa6d47d7ad6
   React-RCTAnimation: 6539e3bf594f6a529cd861985ba6548286ae1ead

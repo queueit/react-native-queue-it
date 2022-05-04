@@ -4,8 +4,6 @@
 @property (nonatomic, strong)QueueITEngine* engine;
 @property RCTPromiseResolveBlock resolve;
 @property RCTPromiseRejectBlock reject;
-@property (nonatomic) CGRect* viewFrame;
-
 -(void) initializeEngine:(UIViewController*) vc
               customerId:(nonnull NSString*) customerId
           eventOrAliasId:(nonnull NSString*) eventOrAliasId
@@ -54,10 +52,6 @@ RCT_REMAP_METHOD(enableTesting,
     self.engine.queueUserExitedDelegate = self; // Invoked when user chooses to leave the queue
     self.engine.queueViewClosedDelegate = self; // Invoked after the WebView is closed
     self.engine.queueSessionRestartDelegate = self; // Invoked after user clicks on a link to restart the session. The link is 'queueit://restartSession'.
-    
-    if(self.viewFrame){
-        [self.engine setViewFrame: self.viewFrame];
-    }
 }
 
 -(void) handleRunResult:(BOOL)success
@@ -80,15 +74,6 @@ RCT_REMAP_METHOD(enableTesting,
             reject(@"error", @"Unknown error was returned by QueueITEngine", error);
         }
     }
-}
-
-RCT_REMAP_METHOD(setViewFrame,
-                 setViewFrame:(int) x
-                 y:(int) y
-                 width:(int) width
-                 height:(int) height){
-    static CGRect rect = CGRectMake(x, y, width, height);
-    self.viewFrame = &rect;
 }
 
 RCT_REMAP_METHOD(runAsync,

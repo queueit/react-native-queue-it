@@ -6,11 +6,10 @@ import {
   EmitterSubscription,
 } from 'react-native';
 
+export { QueueitView } from './view';
+
 interface NativeQueueItModule {
   enableTesting(value: boolean): void;
-
-  setViewFrame(x: number, y: number, width: number, height: number): void;
-
   runAsync(
     clientId: string,
     eventOrAlias: string,
@@ -54,10 +53,6 @@ export interface EnqueueResult {
 class QueueItEngine {
   enableTesting(value: boolean): void {
     nativeQueueIt.enableTesting(value);
-  }
-
-  setViewFrame(x: number, y: number, width: number, height: number): void {
-    nativeQueueIt.setViewFrame(x, y, width, height);
   }
 
   async run(
@@ -136,4 +131,6 @@ class QueueItEngine {
   }
 }
 
-export const QueueIt = new QueueItEngine();
+const QueueIt = new QueueItEngine();
+
+export { QueueIt };
