@@ -81,6 +81,11 @@ class QueueItModule(reactContext: ReactApplicationContext)
           promise.resolve(params)
         }
       }
+
+      override fun onWebViewClosed(){
+        val params = Arguments.createMap()
+        sendEvent(context, "webViewClosed", params)
+      }
     }
   }
 

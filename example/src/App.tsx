@@ -36,7 +36,7 @@ class App extends Component<{}, AppState> {
       enqueueKey: '',
     };
   }
-  componentDidMount() {}
+  componentDidMount() { }
 
   getEnqueueToken = () => 'myToken';
 
@@ -48,6 +48,11 @@ class App extends Component<{}, AppState> {
       QueueIt.once('openingQueueView', () => {
         console.log('opening queue page..');
       });
+
+      QueueIt.once('webViewClosed', () => {
+        console.log('The queue page is closed by the user.');
+      });
+
       let enqueueResult: EnqueueResult;
 
       if (this.state.enqueueKey) {
