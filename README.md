@@ -56,6 +56,12 @@ enqueue = async () => {
     QueueIt.once('openingQueueView', () => {
       console.log('opening queue page..');
     });
+    
+    //We wait for the `webViewClosed` event to be emitted when the user click on queueit://close link.
+    QueueIt.once('webViewClosed', () => {
+      console.log('The queue page is closed by the user.');
+    });
+    
     //Optional layout name that should be used for the waiting room page
     const layoutName = null;
     //Optional language for the waiting room page
