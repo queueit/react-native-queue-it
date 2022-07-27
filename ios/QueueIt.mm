@@ -146,7 +146,7 @@ RCT_REMAP_METHOD(runWithEnqueueKeyAsync,
 
 - (NSArray<NSString *> *)supportedEvents
 {
-    return @[@"openingQueueView", @"userExited"];
+    return @[@"openingQueueView", @"userExited",@"webViewClosed"];
 }
 
 - (void)notifyYourTurn:(QueuePassedInfo *)queuePassedInfo {
@@ -184,7 +184,7 @@ RCT_REMAP_METHOD(runWithEnqueueKeyAsync,
 }
 
 - (void)notifyViewClosed {
-    NSLog(@"View was closed..");
+    [self sendEventWithName: @"webViewClosed" body:@{}];
 }
 
 -(void) notifySessionRestart {

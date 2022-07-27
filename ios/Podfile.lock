@@ -1,8 +1,8 @@
 PODS:
-  - QueueITLibrary (3.0.10)
+  - QueueITLibrary (3.0.14)
 
 DEPENDENCIES:
-  - QueueITLibrary (~> 3.0.10)
+  - QueueITLibrary (3.0.14)
 
 SPEC REPOS:
   trunk:
