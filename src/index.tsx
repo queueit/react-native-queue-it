@@ -59,17 +59,23 @@ class QueueItEngine {
     layoutName?: string,
     language?: string
   ): Promise<EnqueueResult> {
-    const result = await nativeQueueIt.runAsync(
-      customerId,
-      eventOrAliasId,
-      layoutName,
-      language
-    );
+    try {
+      const result = await nativeQueueIt.runAsync(
+        customerId,
+        eventOrAliasId,
+        layoutName,
+        language
+      );
 
-    return {
-      QueueITToken: result.queueittoken,
-      State: result.state,
-    };
+      return {
+        QueueITToken: result.queueittoken,
+        State: result.state,
+      };
+    } catch (error) {
+      this.offAll('openingQueueView');
+      this.offAll('webViewClosed');
+      throw error;
+    }
   }
 
   async runWithEnqueueToken(
@@ -79,18 +85,24 @@ class QueueItEngine {
     layoutName?: string,
     language?: string
   ): Promise<EnqueueResult> {
-    const result = await nativeQueueIt.runWithEnqueueTokenAsync(
-      customerId,
-      eventOrAliasId,
-      enqueueToken,
-      layoutName,
-      language
-    );
+    try {
+      const result = await nativeQueueIt.runWithEnqueueTokenAsync(
+        customerId,
+        eventOrAliasId,
+        enqueueToken,
+        layoutName,
+        language
+      );
 
-    return {
-      QueueITToken: result.queueittoken,
-      State: result.state,
-    };
+      return {
+        QueueITToken: result.queueittoken,
+        State: result.state,
+      };
+    } catch (error) {
+      this.offAll('openingQueueView');
+      this.offAll('webViewClosed');
+      throw error;
+    }
   }
 
   async runWithEnqueueKey(
@@ -100,18 +112,24 @@ class QueueItEngine {
     layoutName?: string,
     language?: string
   ): Promise<EnqueueResult> {
-    const result = await nativeQueueIt.runWithEnqueueKeyAsync(
-      customerId,
-      eventOrAliasId,
-      enqueuekey,
-      layoutName,
-      language
-    );
+    try {
+      const result = await nativeQueueIt.runWithEnqueueKeyAsync(
+        customerId,
+        eventOrAliasId,
+        enqueuekey,
+        layoutName,
+        language
+      );
 
-    return {
-      QueueITToken: result.queueittoken,
-      State: result.state,
-    };
+      return {
+        QueueITToken: result.queueittoken,
+        State: result.state,
+      };
+    } catch (error) {
+      this.offAll('openingQueueView');
+      this.offAll('webViewClosed');
+      throw error;
+    }
   }
 
   on(
@@ -126,6 +144,10 @@ class QueueItEngine {
       l.remove();
       listener.apply(args);
     });
+  }
+
+  offAll(eventType: string): void {
+    queueItEventEmitter.removeAllListeners(eventType);
   }
 }
 

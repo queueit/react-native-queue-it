@@ -92,24 +92,52 @@ class QueueItModule(reactContext: ReactApplicationContext)
   @ReactMethod
   fun runAsync(customerId: String, eventAlias: String, layoutName: String?, language: String?, promise: Promise) {
     handler.post {
-      val queueEngine = QueueITEngine(context.currentActivity, customerId, eventAlias, layoutName, language, getQueueListener(promise))
-      queueEngine.run(context.currentActivity)
+      if (context.currentActivity == null) {
+        promise.reject("error", "Calling QueueItRun with a null activity/context")
+        return@post
+      }
+      try {
+        val queueEngine = QueueITEngine(context.currentActivity, customerId, eventAlias, layoutName, language, getQueueListener(promise))
+        queueEngine.run(context.currentActivity)
+      } catch (e: Exception) {
+        promise.reject("error", e.message)
+        return@post
+      }
+
     }
   }
 
   @ReactMethod
   fun runWithEnqueueTokenAsync(customerId: String, eventAlias: String, enqueueToken: String, layoutName: String?, language: String?, promise: Promise) {
     handler.post {
-      val queueEngine = QueueITEngine(context.currentActivity, customerId, eventAlias, layoutName, language, getQueueListener(promise))
-      queueEngine.runWithEnqueueToken(context.currentActivity, enqueueToken)
+      if (context.currentActivity == null) {
+        promise.reject("error", "Calling QueueItRun with a null activity/context")
+        return@post
+      }
+      try {
+        val queueEngine = QueueITEngine(context.currentActivity, customerId, eventAlias, layoutName, language, getQueueListener(promise))
+        queueEngine.runWithEnqueueToken(context.currentActivity, enqueueToken)
+      } catch (e: Exception) {
+        promise.reject("error", e.message)
+        return@post
+      }
     }
   }
 
   @ReactMethod
   fun runWithEnqueueKeyAsync(customerId: String, eventAlias: String, enqueueKey: String, layoutName: String?, language: String?, promise: Promise) {
     handler.post {
-      val queueEngine = QueueITEngine(context.currentActivity, customerId, eventAlias, layoutName, language, getQueueListener(promise))
-      queueEngine.runWithEnqueueKey(context.currentActivity, enqueueKey)
+      if (context.currentActivity == null) {
+        promise.reject("error", "Calling QueueItRun with a null activity/context")
+        return@post
+      }
+      try {
+        val queueEngine = QueueITEngine(context.currentActivity, customerId, eventAlias, layoutName, language, getQueueListener(promise))
+        queueEngine.runWithEnqueueKey(context.currentActivity, enqueueKey)
+      } catch (e: Exception) {
+        promise.reject("error", e.message)
+        return@post
+      }
     }
   }
 
