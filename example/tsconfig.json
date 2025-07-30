@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "react-native-queue-it": ["../"]
+    }
+  },
+  "include": ["src", "../"],
+  "exclude": ["node_modules"],
+  "extends": "@react-native/typescript-config"
+}

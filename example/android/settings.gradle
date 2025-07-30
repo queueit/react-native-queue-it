@@ -1,8 +1,22 @@
-rootProject.name = 'QueueItExample'
-include ':@react-native-community_checkbox'
-project(':@react-native-community_checkbox').projectDir = new File(rootProject.projectDir, '../node_modules/@react-native-community/checkbox/android')
-apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
-include ':app'
+pluginManagement { includeBuild("../../node_modules/@react-native/gradle-plugin") }
+plugins { id("com.facebook.react.settings") }
+extensions.configure(com.facebook.react.ReactSettingsExtension){ ex -> ex.autolinkLibrariesFromCommand() }
 
-include ':reactnativequeueit'
-project(':reactnativequeueit').projectDir = new File(rootProject.projectDir, '../../android')
+dependencyResolutionManagement {
+  versionCatalogs {
+    create("libs") {
+      from(files("$rootDir/../../gradle/libs.versions.toml"))
+    }
+  }
+}
+
+rootProject.name = 'QueueItExample'
+includeBuild('../../node_modules/@react-native/gradle-plugin')
+
+include ':react-native-community_checkbox'
+project(':react-native-community_checkbox').projectDir = new File(rootProject.projectDir, '../../node_modules/@react-native-community/checkbox/android')
+
+include ':react-native-queue-it'
+project(':react-native-queue-it').projectDir = new File(rootProject.projectDir, '../../android')
+
+include ':app'

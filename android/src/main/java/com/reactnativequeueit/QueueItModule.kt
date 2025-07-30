@@ -25,7 +25,6 @@ class QueueItModule(reactContext: ReactApplicationContext)
     QueueService.IsTest = value
   }
 
-  @ReactMethod
   fun getQueueListener(promise: Promise): QueueListener {
     return object : QueueListener() {
       override fun onUserExited() {
@@ -103,7 +102,6 @@ class QueueItModule(reactContext: ReactApplicationContext)
         promise.reject("error", e.message)
         return@post
       }
-
     }
   }
 

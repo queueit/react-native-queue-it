@@ -8,14 +8,14 @@ import {
   Button,
   TextInput,
 } from 'react-native';
-import CheckBox from '@react-native-community/checkbox';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
+import CheckBoxModule from '@react-native-community/checkbox';
+import type { CheckBoxProps } from '@react-native-community/checkbox';
 
-import {
-  QueueIt,
-  EnqueueResultState,
-  EnqueueResult,
-} from 'react-native-queue-it';
+const CheckBox = CheckBoxModule as React.ComponentType<CheckBoxProps>;
+
+import { QueueIt, EnqueueResultState } from 'react-native-queue-it';
+
+import type { EnqueueResult } from 'react-native-queue-it';
 
 type AppState = {
   clientId: string;
@@ -36,7 +36,7 @@ class App extends Component<{}, AppState> {
       enqueueKey: '',
     };
   }
-  componentDidMount() { }
+  componentDidMount() {}
 
   getEnqueueToken = () => 'myToken';
 
@@ -182,6 +182,18 @@ class App extends Component<{}, AppState> {
     );
   }
 }
+
+const Colors = {
+  darker: '#1c1c1e',
+  lighter: '#f2f2f7',
+  white: '#ffffff',
+  black: '#000000',
+  primary: '#007aff',
+  background: '#f3f3f3',
+  border: '#cccccc',
+  notification: '#ff3b30',
+  dark: '#1c1c1e',
+};
 
 const styles = StyleSheet.create({
   scrollView: {
