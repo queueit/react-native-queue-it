@@ -1,0 +1,20 @@
+current directory: /Users/BRET/Documents/Queue-it/repos/app-sdk-react-native/exampleApp/vendor/bundle/ruby/3.4.0/gems/nkf-0.2.0/ext/nkf
+/opt/homebrew/opt/ruby/bin/ruby extconf.rb
+creating Makefile
+
+current directory: /Users/BRET/Documents/Queue-it/repos/app-sdk-react-native/exampleApp/vendor/bundle/ruby/3.4.0/gems/nkf-0.2.0/ext/nkf
+make DESTDIR\= sitearchdir\=./.gem.20250814-4529-56q1gx sitelibdir\=./.gem.20250814-4529-56q1gx clean
+
+current directory: /Users/BRET/Documents/Queue-it/repos/app-sdk-react-native/exampleApp/vendor/bundle/ruby/3.4.0/gems/nkf-0.2.0/ext/nkf
+make DESTDIR\= sitearchdir\=./.gem.20250814-4529-56q1gx sitelibdir\=./.gem.20250814-4529-56q1gx
+compiling nkf.c
+linking shared-object nkf.bundle
+ld: warning: search path '/opt/homebrew/Cellar/openssl@3/3.5.1/lib' not found
+ld: warning: search path '/opt/homebrew/Cellar/openssl@3/3.5.1/lib' not found
+
+current directory: /Users/BRET/Documents/Queue-it/repos/app-sdk-react-native/exampleApp/vendor/bundle/ruby/3.4.0/gems/nkf-0.2.0/ext/nkf
+make DESTDIR\= sitearchdir\=./.gem.20250814-4529-56q1gx sitelibdir\=./.gem.20250814-4529-56q1gx install
+/usr/bin/install -c -m 0755 nkf.bundle ./.gem.20250814-4529-56q1gx
+
+current directory: /Users/BRET/Documents/Queue-it/repos/app-sdk-react-native/exampleApp/vendor/bundle/ruby/3.4.0/gems/nkf-0.2.0/ext/nkf
+make DESTDIR\= sitearchdir\=./.gem.20250814-4529-56q1gx sitelibdir\=./.gem.20250814-4529-56q1gx clean

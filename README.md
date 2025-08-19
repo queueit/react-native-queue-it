@@ -6,7 +6,7 @@ React Native Module for integrating Queue-it's virtual waiting room into React N
 
 ## Sample app
 
-A sample app project to try out functionality in the library can be found in the [example](https://github.com/queueit/react-native-queue-it/tree/master/example) directory.
+A sample app project to try out functionality in the library can be found in the [exampleApp](https://github.com/queueit/react-native-queue-it/tree/master/exampleApp) directory.
 
 ## Installation
 

@@ -1,10 +1,6 @@
 /* exported EnqueueResultState */
-import {
-  NativeModules,
-  EventSubscriptionVendor,
-  NativeEventEmitter,
-  EmitterSubscription,
-} from 'react-native';
+import { NativeModules, NativeEventEmitter } from 'react-native';
+import type { EmitterSubscription } from 'react-native';
 
 interface NativeQueueItModule {
   enableTesting(value: boolean): void;
@@ -32,8 +28,7 @@ interface NativeQueueItModule {
   ): Promise<any>;
 }
 
-const nativeQueueIt: EventSubscriptionVendor & NativeQueueItModule =
-  NativeModules.QueueIt;
+const nativeQueueIt: NativeQueueItModule = NativeModules.QueueIt;
 const queueItEventEmitter = new NativeEventEmitter(nativeQueueIt as any);
 
 export enum EnqueueResultState {
