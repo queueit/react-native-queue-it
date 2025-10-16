@@ -1,9 +1,10 @@
-/* exported EnqueueResultState */
-import { NativeModules, NativeEventEmitter } from 'react-native';
-import type { EmitterSubscription } from 'react-native';
+import { NativeModules } from 'react-native';
+
+type EventSubscription = { remove: () => void };
 
 interface NativeQueueItModule {
   enableTesting(value: boolean): void;
+
   runAsync(
     clientId: string,
     eventOrAlias: string,
@@ -26,10 +27,26 @@ interface NativeQueueItModule {
     layoutName?: string,
     language?: string
   ): Promise<any>;
+
+  onWebViewEvent?: (cb: (e: string) => void) => { remove: () => void };
+
+  onceAsync?: (eventName: string) => Promise<void>;
 }
 
-const nativeQueueIt: NativeQueueItModule = NativeModules.QueueIt;
-const queueItEventEmitter = new NativeEventEmitter(nativeQueueIt as any);
+function safeRequireTurbo(): NativeQueueItModule | null {
+  try {
+    return require('./specs/NativeQueueIt').default as NativeQueueItModule;
+  } catch {
+    return null;
+  }
+}
+
+const turbo = safeRequireTurbo();
+const legacy = NativeModules.QueueIt as NativeQueueItModule | undefined;
+const nativeQueueIt: NativeQueueItModule = (turbo ?? legacy)!;
+
+const hasTurboEmitter =
+  !!nativeQueueIt && typeof nativeQueueIt.onWebViewEvent === 'function';
 
 export enum EnqueueResultState {
   Passed = 'Passed',
@@ -43,7 +60,18 @@ export interface EnqueueResult {
   State: EnqueueResultState;
 }
 
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
 class QueueItEngine {
+  private subs: EventSubscription[] = [];
+
+  private removeSubRef(sub: EventSubscription) {
+    const i = this.subs.indexOf(sub);
+    if (i >= 0) {
+      this.subs.splice(i, 1);
+    }
+  }
+
   enableTesting(value: boolean): void {
     nativeQueueIt.enableTesting(value);
   }
@@ -61,7 +89,6 @@ class QueueItEngine {
         layoutName,
         language
       );
-
       return {
         QueueITToken: result.queueittoken,
         State: result.state,
@@ -88,7 +115,6 @@ class QueueItEngine {
         layoutName,
         language
       );
-
       return {
         QueueITToken: result.queueittoken,
         State: result.state,
@@ -115,7 +141,6 @@ class QueueItEngine {
         layoutName,
         language
       );
-
       return {
         QueueITToken: result.queueittoken,
         State: result.state,
@@ -127,22 +152,108 @@ class QueueItEngine {
     }
   }
 
-  on(
-    eventType: string,
-    listener: (...args: any[]) => any
-  ): EmitterSubscription {
-    return queueItEventEmitter.addListener(eventType, listener);
+  on(eventType: string, listener: () => void): EventSubscription {
+    if (hasTurboEmitter) {
+      const inner = nativeQueueIt.onWebViewEvent!((e) => {
+        if (e === eventType) {
+          listener();
+        }
+      });
+      const sub = { remove: () => inner.remove() };
+      this.subs.push(sub);
+      return sub;
+    }
+
+    const fn = nativeQueueIt.onceAsync;
+    if (typeof fn !== 'function') {
+      const sub = { remove: () => {} };
+      this.subs.push(sub);
+      return sub;
+    }
+
+    let active = true;
+    const loop = async () => {
+      while (active) {
+        try {
+          await fn(eventType);
+          if (!active) {
+            break;
+          }
+          listener();
+        } catch {
+          if (!active) {
+            break;
+          }
+          await sleep(100);
+        }
+      }
+    };
+    void loop();
+
+    const sub: EventSubscription = {
+      remove: () => {
+        active = false;
+      },
+    };
+    this.subs.push(sub);
+    return sub;
   }
 
-  once(eventType: string, listener: (...args: any[]) => any): void {
-    const l = queueItEventEmitter.addListener(eventType, (args) => {
-      l.remove();
-      listener.apply(args);
-    });
+  once(eventType: string, listener: () => void): void {
+    if (hasTurboEmitter) {
+      let done = false;
+      const inner = nativeQueueIt.onWebViewEvent!((e) => {
+        if (!done && e === eventType) {
+          done = true;
+          inner.remove();
+          sub.remove();
+          this.removeSubRef(sub);
+          listener();
+        }
+      });
+      const sub: EventSubscription = { remove: () => inner.remove() };
+      this.subs.push(sub);
+      return;
+    }
+
+    const fn = nativeQueueIt.onceAsync;
+    let active = true;
+    const sub: EventSubscription = {
+      remove: () => {
+        active = false;
+      },
+    };
+    this.subs.push(sub);
+
+    if (typeof fn === 'function') {
+      fn(eventType)
+        .then(() => {
+          if (!active) {
+            return;
+          }
+          active = false;
+          sub.remove();
+          this.removeSubRef(sub);
+          listener();
+        })
+        .catch(() => {
+          if (!active) {
+            return;
+          }
+          active = false;
+          sub.remove();
+          this.removeSubRef(sub);
+        });
+    } else {
+      active = false;
+      sub.remove();
+      this.removeSubRef(sub);
+    }
   }
 
-  offAll(eventType: string): void {
-    queueItEventEmitter.removeAllListeners(eventType);
+  offAll(_eventType?: string): void {
+    this.subs.forEach((s) => s.remove());
+    this.subs = [];
   }
 }
 

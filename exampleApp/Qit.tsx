@@ -9,10 +9,7 @@ import {
   TextInput,
 } from 'react-native';
 
-import {
-  QueueIt,
-  EnqueueResultState,
-} from 'react-native-queue-it';
+import { QueueIt, EnqueueResultState } from 'react-native-queue-it';
 
 import type { EnqueueResult } from 'react-native-queue-it';
 
@@ -35,7 +32,7 @@ class Qit extends Component<{}, AppState> {
       enqueueKey: '',
     };
   }
-  componentDidMount() { }
+  componentDidMount() {}
 
   getEnqueueToken = () => 'myToken';
 
@@ -44,6 +41,7 @@ class Qit extends Component<{}, AppState> {
   enqueue = async () => {
     try {
       console.log('going to queue-it');
+
       QueueIt.once('openingQueueView', () => {
         console.log('opening queue page..');
       });
@@ -58,21 +56,18 @@ class Qit extends Component<{}, AppState> {
         enqueueResult = await QueueIt.runWithEnqueueKey(
           this.state.clientId,
           this.state.eventOrAlias,
-          this.getEnqueueKey(),
-          'mobile'
+          this.getEnqueueKey()
         );
       } else if (this.state.enqueueToken) {
         enqueueResult = await QueueIt.runWithEnqueueToken(
           this.state.clientId,
           this.state.eventOrAlias,
-          this.getEnqueueToken(),
-          'mobile'
+          this.getEnqueueToken()
         );
       } else {
         enqueueResult = await QueueIt.run(
           this.state.clientId,
-          this.state.eventOrAlias,
-          'mobile'
+          this.state.eventOrAlias
         );
       }
       switch (enqueueResult.State) {
@@ -93,9 +88,10 @@ class Qit extends Component<{}, AppState> {
           console.log('user decided to restart the session');
           await this.enqueue();
       }
+      
     } catch (e) {
       console.log(`error: ${e}`);
-    }
+    } 
   };
 
   onClientChange = (txt: string) => {
@@ -137,28 +133,28 @@ class Qit extends Component<{}, AppState> {
                 <Text>Client Id</Text>
                 <TextInput
                   style={styles.inputBox}
-                  onChangeText={(text) => this.onClientChange(text)}
+                  onChangeText={text => this.onClientChange(text)}
                 />
               </View>
               <View style={styles.margined}>
                 <Text>Event Id or Alias</Text>
                 <TextInput
                   style={styles.inputBox}
-                  onChangeText={(text) => this.onEventChange(text)}
+                  onChangeText={text => this.onEventChange(text)}
                 />
               </View>
               <View style={styles.margined}>
                 <Text>Enqueue token</Text>
                 <TextInput
                   style={styles.inputBox}
-                  onChangeText={(text) => this.onEnqueueTokenChange(text)}
+                  onChangeText={text => this.onEnqueueTokenChange(text)}
                 />
               </View>
               <View style={styles.margined}>
                 <Text>Enqueue key</Text>
                 <TextInput
                   style={styles.inputBox}
-                  onChangeText={(text) => this.onEnqueueKeyChange(text)}
+                  onChangeText={text => this.onEnqueueKeyChange(text)}
                 />
               </View>
               <View style={styles.margined}>

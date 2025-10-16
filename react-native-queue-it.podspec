@@ -11,12 +11,12 @@ Pod::Spec.new do |s|
   s.authors      = package["author"]
 
   s.platforms    = { :ios => "9.0" }
-  s.source       = { :git => "https://github.com/sp0x/react-native-queue-it.git", :tag => "#{s.version}" }
+  s.source       = { :git => "https://github.com/queueit/react-native-queue-it.git", :tag => "#{s.version}" }
 
   
   s.source_files = "ios/**/*.{h,m,mm}"
-  
 
-  s.dependency "React"
+  install_modules_dependencies(s)
+  
   s.dependency "QueueITLibrary", "3.0.14"
 end

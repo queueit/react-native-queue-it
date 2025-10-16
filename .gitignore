@@ -28,6 +28,7 @@ DerivedData
 *.ipa
 *.xcuserstate
 project.xcworkspace
+exampleApp/ios/.xcode.env.local
 
 # Android/IJ
 .idea
@@ -35,6 +36,7 @@ project.xcworkspace
 local.properties
 android.iml
 android/bin/
+android/.settings/
 
 # Cocoapods
 exampleApp/ios/Pods

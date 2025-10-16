@@ -1,5 +1,6 @@
 import type { TurboModule } from 'react-native';
 import { TurboModuleRegistry } from 'react-native';
+import type { EventEmitter } from 'react-native/Libraries/Types/CodegenTypes';
 
 export interface Spec extends TurboModule {
   enableTesting(value: boolean): void;
@@ -25,6 +26,8 @@ export interface Spec extends TurboModule {
     layoutName?: string,
     language?: string
   ): Promise<any>;
+
+  readonly onWebViewEvent: EventEmitter<string>;
 }
 
 export default TurboModuleRegistry.getEnforcing<Spec>('QueueIt');

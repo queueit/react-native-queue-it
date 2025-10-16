@@ -48,7 +48,7 @@ add_library(queueit_library SHARED ${SOURCE_FILES})
     
 find_package(fbjni REQUIRED CONFIG)
 target_link_libraries(queueit_library
-  fbjni
+  fbjni::fbjni
   jsi
   reactnative
 )

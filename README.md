@@ -72,21 +72,19 @@ enqueue = async () => {
       enqueueResult = await QueueIt.runWithEnqueueKey(
         this.state.clientId,
         this.state.eventOrAlias,
-        this.getEnqueueKey(),
-        'mobile'
+        this.getEnqueueKey()
+        
       );
     } else if (this.state.enqueueToken) {
       enqueueResult = await QueueIt.runWithEnqueueToken(
         this.state.clientId,
         this.state.eventOrAlias,
-        this.getEnqueueToken(),
-        'mobile'
+        this.getEnqueueToken()
       );
     } else {
       enqueueResult = await QueueIt.run(
         this.state.clientId,
-        this.state.eventOrAlias,
-        'mobile'
+        this.state.eventOrAlias
       );
     }
     switch (enqueueResult.State) {
