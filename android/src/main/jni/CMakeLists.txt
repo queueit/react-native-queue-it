@@ -24,9 +24,14 @@ file(TO_CMAKE_PATH "${CODEGEN_DIR}" CODEGEN_DIR)
 
 include("${REACT_ANDROID_DIR}/cmake-utils/ReactNative-application.cmake")
 
-set(SOURCE_FILES
-  "${CODEGEN_DIR}/ReactNativeQueueIt-generated.cpp"
-  "${CODEGEN_DIR}/react/renderer/components/ReactNativeQueueIt/ReactNativeQueueItJSI-generated.cpp"
+# React Native's codegen emits a different set of .cpp files per RN version, so glob the
+# generated sources instead of hardcoding filenames to stay resilient across versions.
+# CONFIGURE_DEPENDS re-runs the glob when the generated files change.
+file(
+  GLOB SOURCE_FILES
+  CONFIGURE_DEPENDS
+  "${CODEGEN_DIR}/*.cpp"
+  "${CODEGEN_DIR}/react/renderer/components/ReactNativeQueueIt/*.cpp"
 )
 
 include_directories(

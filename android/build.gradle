@@ -102,11 +102,17 @@ android {
 def kotlin_version = getExtOrDefault('kotlinVersion')
 dependencies {
   implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
-  implementation(libs.react.android)
-  implementation(libs.fbjni)
+  // The 'com.facebook.react' Gradle plugin (applied above) substitutes react-native ->
+  // react-android and supplies the version from the host app's installed React Native,
+  // so no version is pinned here. fbjni is provided transitively by react-android (its
+  // prefab is configured by React Native's CMake helper), so it needs no explicit entry.
+  implementation 'com.facebook.react:react-native:+'
 
   //App dependencies
-  implementation('com.queue-it.androidsdk:library:2.0.36')
-  implementation('com.android.support:appcompat-v7:28.0.0')
-  implementation('com.android.support:design:28.0.0')
+  // Queue-it Android SDK 2.3.0+ is AndroidX-native, so it needs no com.android.support
+  // exclude and works with Jetifier disabled.
+  implementation('com.queue-it.androidsdk:library:2.3.0')
+  implementation('androidx.appcompat:appcompat:1.7.1')
+  implementation('com.google.android.material:material:1.14.0')
+  implementation('androidx.localbroadcastmanager:localbroadcastmanager:1.1.0')
 }

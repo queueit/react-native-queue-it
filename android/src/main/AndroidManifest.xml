@@ -1,3 +1,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+  <!--
+    Declare QueueActivity. This merges into the host app via
+    autolinking for both bare React Native and managed Expo projects.
+  -->
+  <application>
+    <activity android:name="com.queue_it.androidsdk.QueueActivity" />
+  </application>
+
 </manifest>

@@ -205,10 +205,18 @@ class QueueItEngine {
       const inner = nativeQueueIt.onWebViewEvent!((e) => {
         if (!done && e === eventType) {
           done = true;
-          inner.remove();
-          sub.remove();
-          this.removeSubRef(sub);
           listener();
+          // Defer the unsubscribe. Removing this listener synchronously here mutates the
+          // native EventEmitter's listener list while it is still dispatching this very
+          // event, which corrupts the dispatch loop and crashes (SIGSEGV in Hermes) on
+          // the New Architecture — e.g. on the `webViewClosed` event when returning from
+          // the queue. Running it on the next macrotask lets the native dispatch fully
+          // unwind first. `done` already guarantees the listener fires at most once.
+          setTimeout(() => {
+            inner.remove();
+            sub.remove();
+            this.removeSubRef(sub);
+          }, 0);
         }
       });
       const sub: EventSubscription = { remove: () => inner.remove() };

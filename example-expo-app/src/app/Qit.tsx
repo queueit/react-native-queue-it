@@ -3,7 +3,6 @@ import {
   StyleSheet,
   View,
   Text,
-  SafeAreaView,
   ScrollView,
   Button,
   TextInput,
@@ -12,6 +11,7 @@ import {
 import { QueueIt, EnqueueResultState } from 'react-native-queue-it';
 
 import type { EnqueueResult } from 'react-native-queue-it';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 type AppState = {
   clientId: string;
@@ -56,24 +56,24 @@ class Qit extends Component<{}, AppState> {
         enqueueResult = await QueueIt.runWithEnqueueKey(
           this.state.clientId,
           this.state.eventOrAlias,
-          this.getEnqueueKey(),
+          this.getEnqueueKey()
         );
       } else if (this.state.enqueueToken) {
         enqueueResult = await QueueIt.runWithEnqueueToken(
           this.state.clientId,
           this.state.eventOrAlias,
-          this.getEnqueueToken(),
+          this.getEnqueueToken()
         );
       } else {
         enqueueResult = await QueueIt.run(
           this.state.clientId,
-          this.state.eventOrAlias,
+          this.state.eventOrAlias
         );
       }
       switch (enqueueResult.State) {
         case EnqueueResultState.Disabled:
           console.log(
-            `queue is disabled and token is: ${enqueueResult.QueueITToken}`,
+            `queue is disabled and token is: ${enqueueResult.QueueITToken}`
           );
           break;
         case EnqueueResultState.Passed:
@@ -133,7 +133,7 @@ class Qit extends Component<{}, AppState> {
                 <TextInput
                   autoCapitalize="none"
                   style={styles.inputBox}
-                  onChangeText={text => this.onClientChange(text)}
+                  onChangeText={(text) => this.onClientChange(text)}
                 />
               </View>
               <View style={styles.margined}>
@@ -141,7 +141,7 @@ class Qit extends Component<{}, AppState> {
                 <TextInput
                   autoCapitalize="none"
                   style={styles.inputBox}
-                  onChangeText={text => this.onEventChange(text)}
+                  onChangeText={(text) => this.onEventChange(text)}
                 />
               </View>
               <View style={styles.margined}>
@@ -149,7 +149,7 @@ class Qit extends Component<{}, AppState> {
                 <TextInput
                   autoCapitalize="none"
                   style={styles.inputBox}
-                  onChangeText={text => this.onEnqueueTokenChange(text)}
+                  onChangeText={(text) => this.onEnqueueTokenChange(text)}
                 />
               </View>
               <View style={styles.margined}>
@@ -157,7 +157,7 @@ class Qit extends Component<{}, AppState> {
                 <TextInput
                   autoCapitalize="none"
                   style={styles.inputBox}
-                  onChangeText={text => this.onEnqueueKeyChange(text)}
+                  onChangeText={(text) => this.onEnqueueKeyChange(text)}
                 />
               </View>
               <View style={styles.margined}>

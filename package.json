@@ -81,10 +81,10 @@
     "@react-native-community/checkbox": "^0.5.20",
     "@react-native-community/cli": "^18.0.0",
     "react-mixin": "^2.0.2",
-    "react-native": "^0.80.1"
+    "react-native": ">=0.80.1"
   },
   "peerDependencies": {
-    "react-native": "^0.80.1"
+    "react-native": ">=0.80.1"
   },
   "jest": {
     "preset": "react-native",

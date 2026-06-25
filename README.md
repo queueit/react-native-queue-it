@@ -6,7 +6,10 @@ React Native Module for integrating Queue-it's virtual waiting room into React N
 
 ## Sample app
 
-A sample app project to try out functionality in the library can be found in the [exampleApp](https://github.com/queueit/react-native-queue-it/tree/master/exampleApp) directory.
+Two sample apps are available to try out the library:
+
+- [`exampleApp`](https://github.com/queueit/react-native-queue-it/tree/master/exampleApp) — bare React Native
+- [`example-expo-app`](https://github.com/queueit/react-native-queue-it/tree/master/example-expo-app) — Expo (managed)
 
 ## Installation
 
@@ -20,11 +23,53 @@ npm install --save react-native-queue-it
 cd ios && pod install
 ```
 
-When Android is used, the following activity also needs to be included in the application's manifest file.
+On Android, the library automatically registers the required `QueueActivity` — no manual `AndroidManifest.xml` changes are needed.
 
-```xml
-<activity android:name="com.queue_it.androidsdk.QueueActivity"/>
+### Expo
+
+The library works in a managed Expo project with no extra setup. The only exception is `android:allowBackup`: the Queue-it android SDK uses `allowBackup="true"`, so if your app sets `android.allowBackup` to `false` in `app.json` the Android manifest merge fails. To keep `false`, add a config plugin so your app's value wins the merge.
+
+Create `plugins/withQueueItAllowBackup.js`:
+
+```js
+const {
+  withAndroidManifest,
+  createRunOncePlugin,
+} = require('expo/config-plugins');
+
+// Makes the app's android:allowBackup value win the manifest merge.
+const withQueueItAllowBackup = (config) =>
+  withAndroidManifest(config, (config) => {
+    const app = config.modResults?.manifest?.application?.[0];
+    if (!app) return config;
+    app.$ = app.$ || {};
+    const existing = app.$['tools:replace'];
+    app.$['tools:replace'] = existing
+      ? `${existing},android:allowBackup`
+      : 'android:allowBackup';
+    return config;
+  });
+
+const pkg = require('react-native-queue-it/package.json');
+
+module.exports = createRunOncePlugin(
+  withQueueItAllowBackup,
+  pkg.name,
+  pkg.version
+);
 ```
+
+Register it and regenerate the native project:
+
+```json
+{ "expo": { "plugins": ["./plugins/withQueueItAllowBackup"] } }
+```
+
+```sh
+npx expo prebuild --clean
+```
+
+> Bare React Native apps can instead add `tools:replace="android:allowBackup"` to the `<application>` element in `android/app/src/main/AndroidManifest.xml`.
 
 ## Usage
 
@@ -73,7 +118,6 @@ enqueue = async () => {
         this.state.clientId,
         this.state.eventOrAlias,
         this.getEnqueueKey()
-        
       );
     } else if (this.state.enqueueToken) {
       enqueueResult = await QueueIt.runWithEnqueueToken(
@@ -89,7 +133,9 @@ enqueue = async () => {
     }
     switch (enqueueResult.State) {
       case EnqueueResultState.Disabled:
-        console.log(`queue is disabled and QueueITToken is: ${enqueueResult.QueueITToken}`);
+        console.log(
+          `queue is disabled and QueueITToken is: ${enqueueResult.QueueITToken}`
+        );
         break;
       case EnqueueResultState.Passed:
         console.log(
