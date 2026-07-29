@@ -43,6 +43,10 @@ exampleApp/ios/Pods
 ios/Pods
 **/Pods
 
+# Ruby / bundler (vendored gems are build artifacts, reinstalled via `bundle install`)
+vendor/bundle/
+**/vendor/bundle/
+
 # node.js
 node_modules/
 npm-debug.log
