@@ -8,6 +8,7 @@
                        QueueViewClosedDelegate,
                        QueueSessionRestartDelegate>
 @property (nonatomic, strong) QueueITEngine *engine;
+@property (nonatomic) BOOL testingEnabled;
 @property (nonatomic, strong) NativeQueueItSpecBase *specBase;
 
 @property (nonatomic, copy) RCTPromiseResolveBlock resolve;
@@ -66,11 +67,19 @@ RCT_EXPORT_MODULE()
               layoutName:(NSString * _Nullable)layoutName
                 language:(NSString * _Nullable)language
 {
+  // Test mode (formerly QueueService.setTesting:) is now expressed by pointing
+  // the SDK at the test waiting-room domain, mirroring the old TESTING_API_ROOT.
+  NSString *waitingRoomDomain = self.testingEnabled
+      ? [NSString stringWithFormat:@"%@.test.queue-it.net", customerId]
+      : nil;
+
   self.engine = [[QueueITEngine alloc] initWithHost:vc
                                          customerId:customerId
                                      eventOrAliasId:eventOrAliasId
                                          layoutName:layoutName
-                                           language:language];
+                                           language:language
+                                  waitingRoomDomain:waitingRoomDomain
+                                    queuePathPrefix:nil];
 
   self.engine.queuePassedDelegate         = self;
   self.engine.queueViewWillOpenDelegate   = self;
@@ -119,7 +128,7 @@ RCT_EXPORT_MODULE()
 RCT_REMAP_METHOD(enableTesting,
                  enableTesting:(BOOL)value)
 {
-  [QueueService setTesting:value];
+  self.testingEnabled = value;
 }
 
 RCT_REMAP_METHOD(runAsync,
@@ -227,7 +236,7 @@ RCT_REMAP_METHOD(onceAsync,
 
 - (void)enableTesting:(BOOL)value
 {
-  [QueueService setTesting:value];
+  self.testingEnabled = value;
 }
 
 - (void)runAsync:(nonnull NSString *)clientId
