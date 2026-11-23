@@ -18,11 +18,6 @@ class QueueIt(reactContext: ReactApplicationContext)
   override fun getName(): String = implementation.getName()
 
   @ReactMethod
-  fun enableTesting(value: Boolean) {
-    implementation.enableTesting(value)
-  }
-
-  @ReactMethod
   fun onceAsync(eventName: String, promise: Promise) {
     waiters.compute(eventName) { _, list ->
       val l = list ?: mutableListOf()
@@ -31,10 +26,20 @@ class QueueIt(reactContext: ReactApplicationContext)
     }
   }
 
-  private fun resolveWaiters(eventName: String) {
+  private fun resolveWaiters(eventName: String, url: String? = null) {
     val toResolve = waiters.remove(eventName)
     if (toResolve != null) {
-      toResolve.forEach { p -> try { p.resolve(null) } catch (_: Throwable) {} }
+      toResolve.forEach { p ->
+        try {
+          if (url == null) {
+            p.resolve(null)
+          } else {
+            val details = Arguments.createMap()
+            details.putString("url", url)
+            p.resolve(details)
+          }
+        } catch (_: Throwable) {}
+      }
     } else {
     }
   }
@@ -72,6 +77,12 @@ class QueueIt(reactContext: ReactApplicationContext)
         }
       }
 
+      override fun onQueueUrlChanged(url: String?) {
+        implementation.handler.post {
+          resolveWaiters("queueUrlChanged", url)
+        }
+      }
+
       override fun onQueueDisabled(queueDisabledInfo: QueueDisabledInfo?) {
         implementation.handler.post {
           val params = Arguments.createMap()
@@ -84,7 +95,7 @@ class QueueIt(reactContext: ReactApplicationContext)
 
       override fun onError(error: Error?, errorMessage: String?) {
         implementation.handler.post {
-          promise.reject("error", errorMessage)
+          QueueItModule.rejectWithError(promise, error, errorMessage)
         }
       }
 
@@ -106,18 +117,38 @@ class QueueIt(reactContext: ReactApplicationContext)
   }
 
   @ReactMethod
-  fun runAsync(customerId: String, eventAlias: String, layoutName: String?, language: String?, promise: Promise) {
-    implementation.runAsync(customerId, eventAlias, layoutName, language, getQueueListener(promise), promise)
+  fun runAsync(customerId: String, eventAlias: String, layoutName: String?, language: String?, waitingRoomDomain: String?, queuePathPrefix: String?, inviteCode: String?, promise: Promise) {
+    implementation.runAsync(customerId, eventAlias, layoutName, language, waitingRoomDomain, queuePathPrefix, inviteCode, getQueueListener(promise), promise)
   }
 
   @ReactMethod
-  fun runWithEnqueueTokenAsync(customerId: String, eventAlias: String, enqueueToken: String, layoutName: String?, language: String?, promise: Promise) {
-    implementation.runWithEnqueueTokenAsync(customerId, eventAlias, enqueueToken, layoutName, language, getQueueListener(promise), promise)
+  fun runWithEnqueueTokenAsync(customerId: String, eventAlias: String, enqueueToken: String, layoutName: String?, language: String?, waitingRoomDomain: String?, queuePathPrefix: String?, inviteCode: String?, promise: Promise) {
+    implementation.runWithEnqueueTokenAsync(customerId, eventAlias, enqueueToken, layoutName, language, waitingRoomDomain, queuePathPrefix, inviteCode, getQueueListener(promise), promise)
   }
 
   @ReactMethod
-  fun runWithEnqueueKeyAsync(customerId: String, eventAlias: String, enqueueKey: String, layoutName: String?, language: String?, promise: Promise) {
-    implementation.runWithEnqueueKeyAsync(customerId, eventAlias, enqueueKey, layoutName, language, getQueueListener(promise), promise)
+  fun runWithEnqueueKeyAsync(customerId: String, eventAlias: String, enqueueKey: String, layoutName: String?, language: String?, waitingRoomDomain: String?, queuePathPrefix: String?, inviteCode: String?, promise: Promise) {
+    implementation.runWithEnqueueKeyAsync(customerId, eventAlias, enqueueKey, layoutName, language, waitingRoomDomain, queuePathPrefix, inviteCode, getQueueListener(promise), promise)
+  }
+
+  @ReactMethod
+  fun tryPassAsync(customerId: String, eventAlias: String, layoutName: String?, language: String?, waitingRoomDomain: String?, queuePathPrefix: String?, inviteCode: String?, promise: Promise) {
+    implementation.tryPassAsync(customerId, eventAlias, layoutName, language, waitingRoomDomain, queuePathPrefix, inviteCode, promise)
+  }
+
+  @ReactMethod
+  fun tryPassWithEnqueueTokenAsync(customerId: String, eventAlias: String, enqueueToken: String, layoutName: String?, language: String?, waitingRoomDomain: String?, queuePathPrefix: String?, inviteCode: String?, promise: Promise) {
+    implementation.tryPassWithEnqueueTokenAsync(customerId, eventAlias, enqueueToken, layoutName, language, waitingRoomDomain, queuePathPrefix, inviteCode, promise)
+  }
+
+  @ReactMethod
+  fun tryPassWithEnqueueKeyAsync(customerId: String, eventAlias: String, enqueueKey: String, layoutName: String?, language: String?, waitingRoomDomain: String?, queuePathPrefix: String?, inviteCode: String?, promise: Promise) {
+    implementation.tryPassWithEnqueueKeyAsync(customerId, eventAlias, enqueueKey, layoutName, language, waitingRoomDomain, queuePathPrefix, inviteCode, promise)
+  }
+
+  @ReactMethod
+  fun showQueueAsync(customerId: String, eventAlias: String, queueUrl: String, targetUrl: String, queueItToken: String, urlTTLInMinutes: Double, waitingRoomDomain: String?, queuePathPrefix: String?, promise: Promise) {
+    implementation.showQueueAsync(customerId, eventAlias, queueUrl, targetUrl, queueItToken, urlTTLInMinutes, waitingRoomDomain, queuePathPrefix, getQueueListener(promise), promise)
   }
 
   // Required to satisfy RN event interface (even when using DeviceEventEmitter)

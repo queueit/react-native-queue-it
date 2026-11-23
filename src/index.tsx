@@ -1,15 +1,23 @@
-import { NativeModules } from 'react-native';
+import { NativeModules, Platform } from 'react-native';
+import type { WebViewEvent } from './specs/NativeQueueIt';
 
 type EventSubscription = { remove: () => void };
 
-interface NativeQueueItModule {
-  enableTesting(value: boolean): void;
+type SubscriptionRecord = EventSubscription & { eventType: string };
 
+export type QueueItEventDetails = { url: string };
+
+export type QueueItEventListener = (details?: QueueItEventDetails) => void;
+
+interface NativeQueueItModule {
   runAsync(
     clientId: string,
     eventOrAlias: string,
     layoutName?: string,
-    language?: string
+    language?: string,
+    waitingRoomDomain?: string,
+    queuePathPrefix?: string,
+    inviteCode?: string
   ): Promise<any>;
 
   runWithEnqueueKeyAsync(
@@ -17,7 +25,10 @@ interface NativeQueueItModule {
     eventOrAlias: string,
     enqueueKey: string,
     layoutName?: string,
-    language?: string
+    language?: string,
+    waitingRoomDomain?: string,
+    queuePathPrefix?: string,
+    inviteCode?: string
   ): Promise<any>;
 
   runWithEnqueueTokenAsync(
@@ -25,12 +36,60 @@ interface NativeQueueItModule {
     eventOrAlias: string,
     enqueueToken: string,
     layoutName?: string,
-    language?: string
+    language?: string,
+    waitingRoomDomain?: string,
+    queuePathPrefix?: string,
+    inviteCode?: string
   ): Promise<any>;
 
-  onWebViewEvent?: (cb: (e: string) => void) => { remove: () => void };
+  tryPassAsync(
+    clientId: string,
+    eventOrAlias: string,
+    layoutName?: string,
+    language?: string,
+    waitingRoomDomain?: string,
+    queuePathPrefix?: string,
+    inviteCode?: string
+  ): Promise<any>;
 
-  onceAsync?: (eventName: string) => Promise<void>;
+  tryPassWithEnqueueKeyAsync(
+    clientId: string,
+    eventOrAlias: string,
+    enqueueKey: string,
+    layoutName?: string,
+    language?: string,
+    waitingRoomDomain?: string,
+    queuePathPrefix?: string,
+    inviteCode?: string
+  ): Promise<any>;
+
+  tryPassWithEnqueueTokenAsync(
+    clientId: string,
+    eventOrAlias: string,
+    enqueueToken: string,
+    layoutName?: string,
+    language?: string,
+    waitingRoomDomain?: string,
+    queuePathPrefix?: string,
+    inviteCode?: string
+  ): Promise<any>;
+
+  showQueueAsync(
+    clientId: string,
+    eventOrAlias: string,
+    queueUrl: string,
+    targetUrl: string,
+    queueItToken: string,
+    urlTTLInMinutes: number,
+    waitingRoomDomain?: string,
+    queuePathPrefix?: string
+  ): Promise<any>;
+
+  onWebViewEvent?: (cb: (e: WebViewEvent) => void) => { remove: () => void };
+
+  onceAsync?: (
+    eventName: string
+  ) => Promise<QueueItEventDetails | null | undefined>;
 }
 
 function safeRequireTurbo(): NativeQueueItModule | null {
@@ -58,46 +117,204 @@ export enum EnqueueResultState {
 export interface EnqueueResult {
   QueueITToken: string;
   State: EnqueueResultState;
+  ErrorCode?: string;
 }
+
+export type QueueItRunOptions = {
+  waitingRoomDomain?: string;
+  queuePathPrefix?: string;
+  inviteCode?: string;
+};
+
+export enum TryPassState {
+  Passed = 'Passed',
+  Disabled = 'Disabled',
+  Unavailable = 'Unavailable',
+  Queue = 'Queue',
+}
+
+export type RedirectType =
+  | 'queue'
+  | 'safetyNet'
+  | 'afterEvent'
+  | 'disabled'
+  | 'directLink'
+  | 'idle'
+  | 'unknown';
+
+export interface QueueItTryPassResult {
+  QueueITToken: string;
+  QueueUrl: string;
+  TargetUrl: string;
+  UrlTTLInMinutes: number;
+  RedirectType: RedirectType;
+  State: TryPassState;
+  ErrorCode?: string;
+  CustomerId: string;
+  EventOrAliasId: string;
+  WaitingRoomDomain?: string;
+  QueuePathPrefix?: string;
+}
+
+const redirectTypes: RedirectType[] = [
+  'queue',
+  'safetyNet',
+  'afterEvent',
+  'disabled',
+  'directLink',
+  'idle',
+  'unknown',
+];
+
+const stateByRedirectType: Record<RedirectType, TryPassState> = {
+  safetyNet: TryPassState.Passed,
+  directLink: TryPassState.Passed,
+  disabled: TryPassState.Disabled,
+  afterEvent: TryPassState.Disabled,
+  idle: TryPassState.Disabled,
+  queue: TryPassState.Queue,
+  unknown: TryPassState.Queue,
+};
+
+function trimmedOrUndefined(value?: string): string | undefined {
+  return value?.trim() || undefined;
+}
+
+function normaliseRunOptions(options?: QueueItRunOptions): QueueItRunOptions {
+  const waitingRoomDomain = trimmedOrUndefined(options?.waitingRoomDomain);
+  const queuePathPrefix = waitingRoomDomain
+    ? trimmedOrUndefined(options?.queuePathPrefix)
+    : undefined;
+  const inviteCode = trimmedOrUndefined(options?.inviteCode);
+  return { waitingRoomDomain, queuePathPrefix, inviteCode };
+}
+
+function toEnqueueResult(result: any): EnqueueResult {
+  return {
+    QueueITToken: result.queueittoken,
+    State: result.state,
+    ...(result.errorCode ? { ErrorCode: result.errorCode } : {}),
+  };
+}
+
+function toRedirectType(nativeValue: unknown): RedirectType {
+  const lowered = String(nativeValue).toLowerCase();
+  return (
+    redirectTypes.find((type) => type.toLowerCase() === lowered) ?? 'unknown'
+  );
+}
+
+const noPassCheckResultMessage = 'The pass check ended without a result';
+
+function toTryPassResult(
+  result: any,
+  customerId: string,
+  eventOrAliasId: string,
+  { waitingRoomDomain, queuePathPrefix }: QueueItRunOptions
+): QueueItTryPassResult {
+  if (result == null) {
+    throw new Error(noPassCheckResultMessage);
+  }
+  const check = {
+    CustomerId: customerId,
+    EventOrAliasId: eventOrAliasId,
+    ...(waitingRoomDomain ? { WaitingRoomDomain: waitingRoomDomain } : {}),
+    ...(queuePathPrefix ? { QueuePathPrefix: queuePathPrefix } : {}),
+  };
+  if (result.state === EnqueueResultState.Unavailable) {
+    return {
+      QueueITToken: '',
+      QueueUrl: '',
+      TargetUrl: '',
+      UrlTTLInMinutes: 0,
+      RedirectType: 'unknown',
+      State: TryPassState.Unavailable,
+      ...(result.errorCode ? { ErrorCode: result.errorCode } : {}),
+      ...check,
+    };
+  }
+  const queueItToken = result.queueittoken ?? '';
+  const queueUrl = result.queueUrl ?? '';
+  if (!queueItToken && !queueUrl) {
+    throw new Error(noPassCheckResultMessage);
+  }
+  const redirectType = toRedirectType(result.redirectType);
+  const state = stateByRedirectType[redirectType];
+  return {
+    QueueITToken: queueItToken,
+    QueueUrl: queueUrl,
+    TargetUrl: result.targetUrl ?? '',
+    UrlTTLInMinutes: result.urlTTLInMinutes ?? 0,
+    RedirectType: redirectType,
+    State:
+      state === TryPassState.Queue && queueItToken
+        ? TryPassState.Passed
+        : state,
+    ...check,
+  };
+}
+
+const knownEvents = [
+  'openingQueueView',
+  'webViewClosed',
+  'userExited',
+  'queueUrlChanged',
+];
+
+let hasWarnedUserExitedUnavailable = false;
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 class QueueItEngine {
-  private subs: EventSubscription[] = [];
+  private subs: SubscriptionRecord[] = [];
 
-  private removeSubRef(sub: EventSubscription) {
+  private removeSubRef(sub: SubscriptionRecord) {
     const i = this.subs.indexOf(sub);
     if (i >= 0) {
       this.subs.splice(i, 1);
     }
   }
 
-  enableTesting(value: boolean): void {
-    nativeQueueIt.enableTesting(value);
+  // remove() runs once and drops the record, so offAll() never removes it again.
+  private addSub(
+    eventType: string,
+    removeInner: () => void
+  ): SubscriptionRecord {
+    let removed = false;
+    const sub: SubscriptionRecord = {
+      eventType,
+      remove: () => {
+        if (removed) {
+          return;
+        }
+        removed = true;
+        removeInner();
+        this.removeSubRef(sub);
+      },
+    };
+    this.subs.push(sub);
+    return sub;
   }
 
   async run(
     customerId: string,
     eventOrAliasId: string,
     layoutName?: string,
-    language?: string
+    language?: string,
+    options?: QueueItRunOptions
   ): Promise<EnqueueResult> {
-    try {
-      const result = await nativeQueueIt.runAsync(
-        customerId,
-        eventOrAliasId,
-        layoutName,
-        language
-      );
-      return {
-        QueueITToken: result.queueittoken,
-        State: result.state,
-      };
-    } catch (error) {
-      this.offAll('openingQueueView');
-      this.offAll('webViewClosed');
-      throw error;
-    }
+    const { waitingRoomDomain, queuePathPrefix, inviteCode } =
+      normaliseRunOptions(options);
+    const result = await nativeQueueIt.runAsync(
+      customerId,
+      eventOrAliasId,
+      layoutName,
+      language,
+      waitingRoomDomain,
+      queuePathPrefix,
+      inviteCode
+    );
+    return toEnqueueResult(result);
   }
 
   async runWithEnqueueToken(
@@ -105,25 +322,22 @@ class QueueItEngine {
     eventOrAliasId: string,
     enqueueToken: string,
     layoutName?: string,
-    language?: string
+    language?: string,
+    options?: QueueItRunOptions
   ): Promise<EnqueueResult> {
-    try {
-      const result = await nativeQueueIt.runWithEnqueueTokenAsync(
-        customerId,
-        eventOrAliasId,
-        enqueueToken,
-        layoutName,
-        language
-      );
-      return {
-        QueueITToken: result.queueittoken,
-        State: result.state,
-      };
-    } catch (error) {
-      this.offAll('openingQueueView');
-      this.offAll('webViewClosed');
-      throw error;
-    }
+    const { waitingRoomDomain, queuePathPrefix, inviteCode } =
+      normaliseRunOptions(options);
+    const result = await nativeQueueIt.runWithEnqueueTokenAsync(
+      customerId,
+      eventOrAliasId,
+      enqueueToken,
+      layoutName,
+      language,
+      waitingRoomDomain,
+      queuePathPrefix,
+      inviteCode
+    );
+    return toEnqueueResult(result);
   }
 
   async runWithEnqueueKey(
@@ -131,55 +345,171 @@ class QueueItEngine {
     eventOrAliasId: string,
     enqueuekey: string,
     layoutName?: string,
-    language?: string
+    language?: string,
+    options?: QueueItRunOptions
   ): Promise<EnqueueResult> {
-    try {
-      const result = await nativeQueueIt.runWithEnqueueKeyAsync(
-        customerId,
-        eventOrAliasId,
-        enqueuekey,
-        layoutName,
-        language
-      );
+    const { waitingRoomDomain, queuePathPrefix, inviteCode } =
+      normaliseRunOptions(options);
+    const result = await nativeQueueIt.runWithEnqueueKeyAsync(
+      customerId,
+      eventOrAliasId,
+      enqueuekey,
+      layoutName,
+      language,
+      waitingRoomDomain,
+      queuePathPrefix,
+      inviteCode
+    );
+    return toEnqueueResult(result);
+  }
+
+  async tryPass(
+    customerId: string,
+    eventOrAliasId: string,
+    layoutName?: string,
+    language?: string,
+    options?: QueueItRunOptions
+  ): Promise<QueueItTryPassResult> {
+    const normalised = normaliseRunOptions(options);
+    const { waitingRoomDomain, queuePathPrefix, inviteCode } = normalised;
+    const result = await nativeQueueIt.tryPassAsync(
+      customerId,
+      eventOrAliasId,
+      layoutName,
+      language,
+      waitingRoomDomain,
+      queuePathPrefix,
+      inviteCode
+    );
+    return toTryPassResult(result, customerId, eventOrAliasId, normalised);
+  }
+
+  async tryPassWithEnqueueToken(
+    customerId: string,
+    eventOrAliasId: string,
+    enqueueToken: string,
+    layoutName?: string,
+    language?: string,
+    options?: QueueItRunOptions
+  ): Promise<QueueItTryPassResult> {
+    if (!enqueueToken) {
+      throw new Error('EnqueueToken cannot be empty');
+    }
+    const normalised = normaliseRunOptions(options);
+    const { waitingRoomDomain, queuePathPrefix, inviteCode } = normalised;
+    const result = await nativeQueueIt.tryPassWithEnqueueTokenAsync(
+      customerId,
+      eventOrAliasId,
+      enqueueToken,
+      layoutName,
+      language,
+      waitingRoomDomain,
+      queuePathPrefix,
+      inviteCode
+    );
+    return toTryPassResult(result, customerId, eventOrAliasId, normalised);
+  }
+
+  async tryPassWithEnqueueKey(
+    customerId: string,
+    eventOrAliasId: string,
+    enqueueKey: string,
+    layoutName?: string,
+    language?: string,
+    options?: QueueItRunOptions
+  ): Promise<QueueItTryPassResult> {
+    if (!enqueueKey) {
+      throw new Error('EnqueueKey cannot be empty');
+    }
+    const normalised = normaliseRunOptions(options);
+    const { waitingRoomDomain, queuePathPrefix, inviteCode } = normalised;
+    const result = await nativeQueueIt.tryPassWithEnqueueKeyAsync(
+      customerId,
+      eventOrAliasId,
+      enqueueKey,
+      layoutName,
+      language,
+      waitingRoomDomain,
+      queuePathPrefix,
+      inviteCode
+    );
+    return toTryPassResult(result, customerId, eventOrAliasId, normalised);
+  }
+
+  async showQueue(result: QueueItTryPassResult): Promise<EnqueueResult> {
+    if (result.State !== TryPassState.Queue) {
       return {
-        QueueITToken: result.queueittoken,
-        State: result.state,
+        QueueITToken: result.QueueITToken,
+        State: result.State as string as EnqueueResultState,
+        ...(result.ErrorCode ? { ErrorCode: result.ErrorCode } : {}),
       };
-    } catch (error) {
-      this.offAll('openingQueueView');
-      this.offAll('webViewClosed');
-      throw error;
+    }
+    if (!result.QueueUrl) {
+      throw new Error('QueueUrl cannot be empty');
+    }
+    const { waitingRoomDomain, queuePathPrefix } = normaliseRunOptions({
+      waitingRoomDomain: result.WaitingRoomDomain,
+      queuePathPrefix: result.QueuePathPrefix,
+    });
+    const nativeResult = await nativeQueueIt.showQueueAsync(
+      result.CustomerId,
+      result.EventOrAliasId,
+      result.QueueUrl,
+      result.TargetUrl,
+      result.QueueITToken,
+      result.UrlTTLInMinutes,
+      waitingRoomDomain,
+      queuePathPrefix
+    );
+    return toEnqueueResult(nativeResult);
+  }
+
+  isEventAvailable(event: string): boolean {
+    if (!knownEvents.includes(event)) {
+      return false;
+    }
+    return !(Platform.OS === 'android' && event === 'userExited');
+  }
+
+  private warnIfUserExitedUnavailable(eventType: string) {
+    if (
+      __DEV__ &&
+      eventType === 'userExited' &&
+      !this.isEventAvailable(eventType) &&
+      !hasWarnedUserExitedUnavailable
+    ) {
+      hasWarnedUserExitedUnavailable = true;
+      console.warn(
+        "react-native-queue-it: 'userExited' is not available on Android, the Android SDK never sends it."
+      );
     }
   }
 
-  on(eventType: string, listener: () => void): EventSubscription {
+  on(eventType: string, listener: QueueItEventListener): EventSubscription {
+    this.warnIfUserExitedUnavailable(eventType);
     if (hasTurboEmitter) {
       const inner = nativeQueueIt.onWebViewEvent!((e) => {
-        if (e === eventType) {
-          listener();
+        if (e.name === eventType) {
+          listener(e.details);
         }
       });
-      const sub = { remove: () => inner.remove() };
-      this.subs.push(sub);
-      return sub;
+      return this.addSub(eventType, () => inner.remove());
     }
 
     const fn = nativeQueueIt.onceAsync;
     if (typeof fn !== 'function') {
-      const sub = { remove: () => {} };
-      this.subs.push(sub);
-      return sub;
+      return this.addSub(eventType, () => {});
     }
 
     let active = true;
     const loop = async () => {
       while (active) {
         try {
-          await fn(eventType);
+          const details = await fn(eventType);
           if (!active) {
             break;
           }
-          listener();
+          listener(details ?? undefined);
         } catch {
           if (!active) {
             break;
@@ -190,22 +520,19 @@ class QueueItEngine {
     };
     void loop();
 
-    const sub: EventSubscription = {
-      remove: () => {
-        active = false;
-      },
-    };
-    this.subs.push(sub);
-    return sub;
+    return this.addSub(eventType, () => {
+      active = false;
+    });
   }
 
-  once(eventType: string, listener: () => void): void {
+  once(eventType: string, listener: QueueItEventListener): void {
+    this.warnIfUserExitedUnavailable(eventType);
     if (hasTurboEmitter) {
       let done = false;
       const inner = nativeQueueIt.onWebViewEvent!((e) => {
-        if (!done && e === eventType) {
+        if (!done && e.name === eventType) {
           done = true;
-          listener();
+          listener(e.details);
           // Defer the unsubscribe. Removing this listener synchronously here mutates the
           // native EventEmitter's listener list while it is still dispatching this very
           // event, which corrupts the dispatch loop and crashes (SIGSEGV in Hermes) on
@@ -219,14 +546,18 @@ class QueueItEngine {
           }, 0);
         }
       });
-      const sub: EventSubscription = { remove: () => inner.remove() };
+      const sub: SubscriptionRecord = {
+        eventType,
+        remove: () => inner.remove(),
+      };
       this.subs.push(sub);
       return;
     }
 
     const fn = nativeQueueIt.onceAsync;
     let active = true;
-    const sub: EventSubscription = {
+    const sub: SubscriptionRecord = {
+      eventType,
       remove: () => {
         active = false;
       },
@@ -235,14 +566,14 @@ class QueueItEngine {
 
     if (typeof fn === 'function') {
       fn(eventType)
-        .then(() => {
+        .then((details) => {
           if (!active) {
             return;
           }
           active = false;
           sub.remove();
           this.removeSubRef(sub);
-          listener();
+          listener(details ?? undefined);
         })
         .catch(() => {
           if (!active) {
@@ -259,9 +590,17 @@ class QueueItEngine {
     }
   }
 
-  offAll(_eventType?: string): void {
-    this.subs.forEach((s) => s.remove());
-    this.subs = [];
+  offAll(eventType?: string): void {
+    const kept: SubscriptionRecord[] = [];
+    // Copy first: an on() record's remove() drops itself from this.subs.
+    [...this.subs].forEach((s) => {
+      if (eventType == null || s.eventType === eventType) {
+        s.remove();
+      } else {
+        kept.push(s);
+      }
+    });
+    this.subs = kept;
   }
 }
 

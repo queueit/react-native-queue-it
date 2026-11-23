@@ -10,12 +10,14 @@ Pod::Spec.new do |s|
   s.license      = package["license"]
   s.authors      = package["author"]
 
-  s.platforms    = { :ios => "12.0" }
+  s.platforms    = { :ios => "15.0" }
+  s.swift_version = "5.0"
   s.source       = { :git => "https://github.com/queueit/react-native-queue-it.git", :tag => "#{s.version}" }
 
 
-  s.source_files = "ios/*.{h,m,mm}"
-  s.vendored_frameworks = "ios/QueueITLib.xcframework"
+  s.source_files = "ios/*.{h,m,mm,swift}"
+  s.private_header_files = "ios/*.h"
+  s.vendored_frameworks = "ios/QueueItKit.xcframework"
 
   install_modules_dependencies(s)
 end

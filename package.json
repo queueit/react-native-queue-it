@@ -1,6 +1,6 @@
 {
   "name": "react-native-queue-it",
-  "version": "1.4.0",
+  "version": "2.0.0",
   "description": "React Native Module for integrating Queue-it's virtual waiting room into React Native apps.",
   "main": "lib/commonjs/index",
   "module": "lib/module/index",
@@ -25,7 +25,8 @@
     "!**/local.properties",
     "!**/*.xcs*",
     "!**/*.plist",
-    "!**/.settings"
+    "!**/.settings",
+    "ios/QueueItKit.xcframework/**/*.plist"
   ],
   "scripts": {
     "test": "jest",
@@ -88,6 +89,7 @@
     "preset": "react-native",
     "modulePathIgnorePatterns": [
       "<rootDir>/exampleApp/node_modules",
+      "<rootDir>/exampleOldArchApp/node_modules",
       "<rootDir>/lib/"
     ]
   },

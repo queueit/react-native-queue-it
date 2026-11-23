@@ -14,16 +14,10 @@ class QueueIt(reactContext: ReactApplicationContext)
     return implementation.getName()
   }
 
-  @ReactMethod
-  override fun enableTesting(value: Boolean) {
-    implementation.enableTesting(value)
-  }
-
   fun getQueueListener(promise: Promise): QueueListener {
     return object : QueueListener() {
       override fun onUserExited() {
-        val params = Arguments.createMap()
-        sendEvent(implementation.context, "userExited", params)
+        sendEvent("userExited")
       }
 
       override fun onQueuePassed(queuePassedInfo: QueuePassedInfo?) {
@@ -46,8 +40,13 @@ class QueueIt(reactContext: ReactApplicationContext)
       }
 
       override fun onQueueViewWillOpen() {
-        val params = Arguments.createMap()
-        sendEvent(implementation.context, "openingQueueView", params)
+        sendEvent("openingQueueView")
+      }
+
+      override fun onQueueUrlChanged(url: String?) {
+        val details = Arguments.createMap()
+        details.putString("url", url)
+        sendEvent("queueUrlChanged", details)
       }
 
       override fun onQueueDisabled(queueDisabledInfo: QueueDisabledInfo?) {
@@ -62,7 +61,7 @@ class QueueIt(reactContext: ReactApplicationContext)
 
       override fun onError(error: Error?, errorMessage: String?) {
         implementation.handler.post {
-          promise.reject("error", errorMessage)
+          QueueItModule.rejectWithError(promise, error, errorMessage)
         }
       }
 
@@ -76,25 +75,44 @@ class QueueIt(reactContext: ReactApplicationContext)
       }
 
       override fun onWebViewClosed(){
-        val params = Arguments.createMap()
-        sendEvent(implementation.context, "webViewClosed", params)
+        sendEvent("webViewClosed")
       }
     }
   }
 
   @ReactMethod
-  override fun runAsync(customerId: String, eventAlias: String, layoutName: String?, language: String?, promise: Promise) {
-    implementation.runAsync(customerId, eventAlias, layoutName, language, getQueueListener(promise), promise)
+  override fun runAsync(customerId: String, eventAlias: String, layoutName: String?, language: String?, waitingRoomDomain: String?, queuePathPrefix: String?, inviteCode: String?, promise: Promise) {
+    implementation.runAsync(customerId, eventAlias, layoutName, language, waitingRoomDomain, queuePathPrefix, inviteCode, getQueueListener(promise), promise)
   }
 
   @ReactMethod
-  override fun runWithEnqueueTokenAsync(customerId: String, eventAlias: String, enqueueToken: String, layoutName: String?, language: String?, promise: Promise) {
-    implementation.runWithEnqueueTokenAsync(customerId, eventAlias, enqueueToken, layoutName, language, getQueueListener(promise), promise)
+  override fun runWithEnqueueTokenAsync(customerId: String, eventAlias: String, enqueueToken: String, layoutName: String?, language: String?, waitingRoomDomain: String?, queuePathPrefix: String?, inviteCode: String?, promise: Promise) {
+    implementation.runWithEnqueueTokenAsync(customerId, eventAlias, enqueueToken, layoutName, language, waitingRoomDomain, queuePathPrefix, inviteCode, getQueueListener(promise), promise)
   }
 
   @ReactMethod
-  override fun runWithEnqueueKeyAsync(customerId: String, eventAlias: String, enqueueKey: String, layoutName: String?, language: String?, promise: Promise) {
-    implementation.runWithEnqueueKeyAsync(customerId, eventAlias, enqueueKey, layoutName, language, getQueueListener(promise), promise)
+  override fun runWithEnqueueKeyAsync(customerId: String, eventAlias: String, enqueueKey: String, layoutName: String?, language: String?, waitingRoomDomain: String?, queuePathPrefix: String?, inviteCode: String?, promise: Promise) {
+    implementation.runWithEnqueueKeyAsync(customerId, eventAlias, enqueueKey, layoutName, language, waitingRoomDomain, queuePathPrefix, inviteCode, getQueueListener(promise), promise)
+  }
+
+  @ReactMethod
+  override fun tryPassAsync(customerId: String, eventAlias: String, layoutName: String?, language: String?, waitingRoomDomain: String?, queuePathPrefix: String?, inviteCode: String?, promise: Promise) {
+    implementation.tryPassAsync(customerId, eventAlias, layoutName, language, waitingRoomDomain, queuePathPrefix, inviteCode, promise)
+  }
+
+  @ReactMethod
+  override fun tryPassWithEnqueueTokenAsync(customerId: String, eventAlias: String, enqueueToken: String, layoutName: String?, language: String?, waitingRoomDomain: String?, queuePathPrefix: String?, inviteCode: String?, promise: Promise) {
+    implementation.tryPassWithEnqueueTokenAsync(customerId, eventAlias, enqueueToken, layoutName, language, waitingRoomDomain, queuePathPrefix, inviteCode, promise)
+  }
+
+  @ReactMethod
+  override fun tryPassWithEnqueueKeyAsync(customerId: String, eventAlias: String, enqueueKey: String, layoutName: String?, language: String?, waitingRoomDomain: String?, queuePathPrefix: String?, inviteCode: String?, promise: Promise) {
+    implementation.tryPassWithEnqueueKeyAsync(customerId, eventAlias, enqueueKey, layoutName, language, waitingRoomDomain, queuePathPrefix, inviteCode, promise)
+  }
+
+  @ReactMethod
+  override fun showQueueAsync(customerId: String, eventAlias: String, queueUrl: String, targetUrl: String, queueItToken: String, urlTTLInMinutes: Double, waitingRoomDomain: String?, queuePathPrefix: String?, promise: Promise) {
+    implementation.showQueueAsync(customerId, eventAlias, queueUrl, targetUrl, queueItToken, urlTTLInMinutes, waitingRoomDomain, queuePathPrefix, getQueueListener(promise), promise)
   }
 
   @ReactMethod
@@ -103,7 +121,12 @@ class QueueIt(reactContext: ReactApplicationContext)
   @ReactMethod
   fun removeListeners(count: Double) { /* no-op */ }
 
-  private fun sendEvent(reactContext: ReactContext, eventName: String, params: WritableMap) {
-    emitOnWebViewEvent(eventName)
+  private fun sendEvent(eventName: String, details: WritableMap? = null) {
+    val event = Arguments.createMap()
+    event.putString("name", eventName)
+    if (details != null) {
+      event.putMap("details", details)
+    }
+    emitOnWebViewEvent(event)
   }
 }

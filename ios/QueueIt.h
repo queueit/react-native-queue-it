@@ -1,20 +1,8 @@
 #import <React/RCTBridgeModule.h>
 #import <React/RCTEventEmitter.h>
 #import <React/RCTUtils.h>
-#import "QueueITEngine.h"
 #import <ReactNativeQueueIt/ReactNativeQueueIt.h>
-#define ENQUEUE_STATE(x) \
-    (EnqueueResultState_toString[x])
 
-typedef enum {
-    Passed,
-    Disabled,
-    Unavailable,
-    RestartedSession
-} EnqueueResultState;
-
-extern NSString * const EnqueueResultState_toString[];
-
-@interface QueueIt : RCTEventEmitter <RCTBridgeModule, NativeQueueItSpec, QueuePassedDelegate, QueueViewWillOpenDelegate, QueueDisabledDelegate, QueueITUnavailableDelegate, QueueUserExitedDelegate, QueueViewClosedDelegate, QueueSessionRestartDelegate>
+@interface QueueIt : RCTEventEmitter <RCTBridgeModule, NativeQueueItSpec>
 
 @end
